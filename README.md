@@ -1,0 +1,1 @@
+# go-nuget-poller-plugin-2.0
