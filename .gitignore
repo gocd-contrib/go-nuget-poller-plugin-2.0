@@ -8,4 +8,6 @@
 *.war
 *.ear
 
-
+# Gradle files
+build/
+.gradle/
