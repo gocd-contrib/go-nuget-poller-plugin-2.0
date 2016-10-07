@@ -1,0 +1,36 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.thoughtworks.go'
+version = '1.0'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['com/']
+        }
+        resources {
+            srcDirs = ['resources/']
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+dependencies {
+    compile group: 'cd.go.plugin', name: 'go-plugin-api', version:'15.2.0'
+    compile group: 'com.google.code.gson', name: 'gson', version:'2.3.1'
+    compile group: 'commons-io', name: 'commons-io', version:'2.4'
+}
+
+jar {
+    from(configurations.compile) {
+        into "lib/"
+    }
+}
