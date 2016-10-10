@@ -2,6 +2,7 @@
 
 # IntelliJ files
 .idea/
+*.iml
 
 # Package Files #
 *.jar
@@ -11,3 +12,6 @@
 # Gradle files
 build/
 .gradle/
+gradle/
+gradlew.bat
+gradlew
