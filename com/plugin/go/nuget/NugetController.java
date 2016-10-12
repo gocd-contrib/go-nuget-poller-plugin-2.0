@@ -3,12 +3,14 @@
  */
 package plugin.go.nuget;
 
+import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
 import com.thoughtworks.go.plugin.api.GoPluginIdentifier;
 import com.thoughtworks.go.plugin.api.annotation.Extension;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
+import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import java.util.*;
 
@@ -31,6 +33,7 @@ public class NugetController implements GoPlugin {
     }
 
     public GoPluginApiResponse handle(GoPluginApiRequest goPluginApiRequest) {
+
         PackageConfigs packageConfigs = new PackageConfigs();
         RepositoryConfigs repositoryConfigs = new RepositoryConfigs();
         ConnectionChecker connectionChecker = new ConnectionChecker();
@@ -41,15 +44,15 @@ public class NugetController implements GoPlugin {
         logger.info("Request body " + goPluginApiRequest.requestHeaders());
 
         if (goPluginApiRequest.requestName().equals(REQUEST_REPOSITORY_CONFIGURATION)) {
-            return repositoryConfigs.handleRepositoryConfiguration();
+            return createResponse(SUCCESS_RESPONSE_CODE, repositoryConfigs.handleRepositoryConfiguration());
         } else if (goPluginApiRequest.requestName().equals(REQUEST_PACKAGE_CONFIGURATION)) {
-            return packageConfigs.handlePackageConfiguration();
+            return createResponse(SUCCESS_RESPONSE_CODE, packageConfigs.handlePackageConfiguration());
         } else if (goPluginApiRequest.requestName().equals(VALIDATE_REPOSITORY_CONFIGURATION)) {
-            return repositoryConfigs.handleValidateRepositoryConfiguration(goPluginApiRequest);
+            return createResponse(SUCCESS_RESPONSE_CODE, repositoryConfigs.handleValidateRepositoryConfiguration(goPluginApiRequest));
         } else if (goPluginApiRequest.requestName().equals(VALIDATE_PACKAGE_CONFIGURATION)) {
-            return packageConfigs.handleValidatePackageConfiguration(goPluginApiRequest);
+            return createResponse(SUCCESS_RESPONSE_CODE, packageConfigs.handleValidatePackageConfiguration(goPluginApiRequest));
         } else if (goPluginApiRequest.requestName().equals(CHECK_REPOSITORY_CONNECTION)) {
-            return connectionChecker.handleCheckRepositoryConnection(goPluginApiRequest);
+            return createResponse(SUCCESS_RESPONSE_CODE, connectionChecker.handleCheckRepositoryConnection(goPluginApiRequest));
         }
         return null;
     }
@@ -58,9 +61,10 @@ public class NugetController implements GoPlugin {
         return new GoPluginIdentifier("package-repository", Arrays.asList("1.0"));
     }
 
-
-
-
-
+    private static GoPluginApiResponse createResponse(int responseCode, Object body) {
+        final DefaultGoPluginApiResponse response = new DefaultGoPluginApiResponse(responseCode);
+        response.setResponseBody(new GsonBuilder().serializeNulls().create().toJson(body));
+        return response;
+    }
 
 }

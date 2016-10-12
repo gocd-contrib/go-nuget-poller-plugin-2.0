@@ -12,17 +12,17 @@ import java.util.Map;
 
 public class ConnectionChecker {
 
-    public GoPluginApiResponse handleCheckRepositoryConnection(GoPluginApiRequest request) {
+    public Map handleCheckRepositoryConnection(GoPluginApiRequest request) {
         HttpRepoURL repoConnection = createRepositoryConnection(request);
         try {
             repoConnection.checkConnection();
         } catch (Exception e) {
             Map responseMap = formatConnectionResponse("failure", "Unsuccessful Connection");
-            return ResponseFormatter.createResponse(200, responseMap);
+            return responseMap;
         }
 
         Map responseMap = formatConnectionResponse("success", "Successfully connected to repository url provided");
-        return ResponseFormatter.createResponse(200, responseMap);
+        return responseMap;
     }
 
     private Map formatConnectionResponse(String status, String message) {

@@ -11,17 +11,17 @@ import java.util.Map;
 
 public class RepositoryConfigs extends PluginConfigs{
 
-    public GoPluginApiResponse handleRepositoryConfiguration() {
+    public Map handleRepositoryConfiguration() {
         Map repositoryConfig = new HashMap();
 
         repositoryConfig.put("REPOSITORY_URL", createConfigurationField("Repository Url", "0", false, true, true));
         repositoryConfig.put("USERNAME", createConfigurationField("Username", "1", true, false, false));
         repositoryConfig.put("PASSWORD", createConfigurationField("Password", "2", true, false, false));
 
-        return ResponseFormatter.createResponse(NugetController.SUCCESS_RESPONSE_CODE, repositoryConfig);
+        return repositoryConfig;
     }
 
-    public GoPluginApiResponse handleValidateRepositoryConfiguration(GoPluginApiRequest request) {
+    public List handleValidateRepositoryConfiguration(GoPluginApiRequest request) {
         List validationList = new ArrayList();
         Map requestMap = (Map) new GsonBuilder().create().fromJson(request.requestBody(), Object.class);
         Map configMap = (Map) requestMap.get("repository-configuration");
@@ -34,7 +34,7 @@ public class RepositoryConfigs extends PluginConfigs{
             validationList.add(errors);
         }
 
-        return ResponseFormatter.createResponse(NugetController.SUCCESS_RESPONSE_CODE, validationList);
+        return validationList;
     }
 
 
