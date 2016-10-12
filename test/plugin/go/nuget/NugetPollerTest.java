@@ -17,7 +17,12 @@ import static org.mockito.Mockito.when;
 
 public class NugetPollerTest {
 
-    static int SUCCESS_STATUS_CODE = 200;
+    private static final int SUCCESS_STATUS_CODE = 200;
+    private static final String REQUEST_REPOSITORY_CONFIGURATION = "repository-configuration";
+    private static final String REQUEST_PACKAGE_CONFIGURATION = "package-configuration";
+    private static final String VALIDATE_REPOSITORY_CONFIGURATION = "validate-repository-configuration";
+    private static final String VALIDATE_PACKAGE_CONFIGURATION = "validate-package-configuration";
+
     NugetPoller nugetPoller;
     GoPluginApiRequest goApiPluginRequest;
 
@@ -38,7 +43,7 @@ public class NugetPollerTest {
 
     @Test
     public void shouldReturnConfigurationsWhenHandlingRepositoryConfigurationRequest() {
-        when(goApiPluginRequest.requestName()).thenReturn("repository-configuration");
+        when(goApiPluginRequest.requestName()).thenReturn(REQUEST_REPOSITORY_CONFIGURATION);
 
         GoPluginApiResponse response = nugetPoller.handle(goApiPluginRequest);
 
@@ -48,7 +53,7 @@ public class NugetPollerTest {
 
     @Test
     public void shouldReturnConfigurationsWhenHandlingPackageConfigurationRequest() {
-        when(goApiPluginRequest.requestName()).thenReturn("package-configuration");
+        when(goApiPluginRequest.requestName()).thenReturn(REQUEST_PACKAGE_CONFIGURATION);
 
         GoPluginApiResponse response = nugetPoller.handle(goApiPluginRequest);
 
@@ -57,8 +62,8 @@ public class NugetPollerTest {
     }
 
     @Test
-     public void shouldErrorWhenInvalidRepositoryConfiguration(){
-        when(goApiPluginRequest.requestName()).thenReturn("validate-repository-configuration");
+         public void shouldErrorWhenInvalidRepositoryConfiguration(){
+        when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_REPOSITORY_CONFIGURATION);
         String invalidBody = createUrlRequestBody("");
         when(goApiPluginRequest.requestBody()).thenReturn(invalidBody);
 
@@ -71,7 +76,7 @@ public class NugetPollerTest {
 
     @Test
     public void shouldReturnEmptyErrorListWhenValidRepositoryConfigurations(){
-        when(goApiPluginRequest.requestName()).thenReturn("validate-repository-configuration");
+        when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_REPOSITORY_CONFIGURATION);
         String validBody = createUrlRequestBody("http://testsite.com");
         when(goApiPluginRequest.requestBody()).thenReturn(validBody);
 
@@ -83,6 +88,33 @@ public class NugetPollerTest {
 
     }
 
+    @Test
+    public void shouldErrorWhenInvalidPackageConfiguration(){
+        when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_PACKAGE_CONFIGURATION);
+        String invalidBody = createUrlRequestBody("");
+        when(goApiPluginRequest.requestBody()).thenReturn(invalidBody);
+
+        GoPluginApiResponse response = nugetPoller.handle(goApiPluginRequest);
+        List responseList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
+
+        Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
+        Assert.assertFalse(responseList.isEmpty());
+    }
+
+//    @Test
+//    public void shouldReturnEmptyErrorListWhenValidPackageConfigurations(){
+//        when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_PACKAGE_CONFIGURATION);
+//        String validBody = createUrlRequestBody("http://testsite.com");
+//        when(goApiPluginRequest.requestBody()).thenReturn(validBody);
+//
+//        GoPluginApiResponse response = nugetPoller.handle(goApiPluginRequest);
+//        List responseList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
+//
+//        Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
+//        Assert.assertTrue(responseList.isEmpty());
+//
+//    }
+
     private String createUrlRequestBody(String url) {
         Map urlMap=  new HashMap();
         urlMap.put("value", url);
@@ -92,4 +124,5 @@ public class NugetPollerTest {
         invalidBodyMap.put("repository-configuration", fieldsMap);
         return new GsonBuilder().serializeNulls().create().toJson(invalidBodyMap);
     }
+
 }
