@@ -8,18 +8,18 @@ import java.util.Map;
 
 public class PackageConfigs extends PluginConfigs{
 
-    public static GoPluginApiResponse handlePackageConfiguration() {
+    public GoPluginApiResponse handlePackageConfiguration() {
         Map packageConfig = new HashMap();
 
         packageConfig.put("PACKAGE_ID", createConfigurationField("Package ID", "0", false, true, true));
         packageConfig.put("PACKAGE_NAME", createConfigurationField("Package Name", "1", false, true, true));
 
-        return ResponseFormatter.createResponse(NugetPoller.SUCCESS_RESPONSE_CODE, packageConfig);
+        return ResponseFormatter.createResponse(NugetController.SUCCESS_RESPONSE_CODE, packageConfig);
     }
 
 
 
-    public static GoPluginApiResponse handleValidatePackageConfiguration(GoPluginApiRequest goPluginApiRequest) {
+    public GoPluginApiResponse handleValidatePackageConfiguration(GoPluginApiRequest goPluginApiRequest) {
         return null;
     }
 }

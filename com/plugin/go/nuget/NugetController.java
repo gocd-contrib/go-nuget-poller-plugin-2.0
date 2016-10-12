@@ -13,9 +13,11 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import java.util.*;
 
 @Extension
-public class NugetPoller implements GoPlugin {
+public class NugetController implements GoPlugin {
     private GoApplicationAccessor accessor;
-    private static Logger logger = Logger.getLoggerFor(NugetPoller.class);
+
+    private static Logger logger = Logger.getLoggerFor(NugetController.class);
+
     private static final String REQUEST_REPOSITORY_CONFIGURATION = "repository-configuration";
     private static final String REQUEST_PACKAGE_CONFIGURATION = "package-configuration";
     private static final String VALIDATE_REPOSITORY_CONFIGURATION = "validate-repository-configuration";
@@ -29,21 +31,25 @@ public class NugetPoller implements GoPlugin {
     }
 
     public GoPluginApiResponse handle(GoPluginApiRequest goPluginApiRequest) {
+        PackageConfigs packageConfigs = new PackageConfigs();
+        RepositoryConfigs repositoryConfigs = new RepositoryConfigs();
+        ConnectionChecker connectionChecker = new ConnectionChecker();
+
         logger.info("Request name " + goPluginApiRequest.requestName());
         logger.info("Request body " + goPluginApiRequest.requestBody());
         logger.info("Request body " + goPluginApiRequest.requestParameters());
         logger.info("Request body " + goPluginApiRequest.requestHeaders());
 
         if (goPluginApiRequest.requestName().equals(REQUEST_REPOSITORY_CONFIGURATION)) {
-            return RepositoryConfigs.handleRepositoryConfiguration();
+            return repositoryConfigs.handleRepositoryConfiguration();
         } else if (goPluginApiRequest.requestName().equals(REQUEST_PACKAGE_CONFIGURATION)) {
-            return PackageConfigs.handlePackageConfiguration();
+            return packageConfigs.handlePackageConfiguration();
         } else if (goPluginApiRequest.requestName().equals(VALIDATE_REPOSITORY_CONFIGURATION)) {
-            return RepositoryConfigs.handleValidateRepositoryConfiguration(goPluginApiRequest);
+            return repositoryConfigs.handleValidateRepositoryConfiguration(goPluginApiRequest);
         } else if (goPluginApiRequest.requestName().equals(VALIDATE_PACKAGE_CONFIGURATION)) {
-            return PackageConfigs.handleValidatePackageConfiguration(goPluginApiRequest);
+            return packageConfigs.handleValidatePackageConfiguration(goPluginApiRequest);
         } else if (goPluginApiRequest.requestName().equals(CHECK_REPOSITORY_CONNECTION)) {
-            return ConnectionChecker.handleCheckRepositoryConnection(goPluginApiRequest);
+            return connectionChecker.handleCheckRepositoryConnection(goPluginApiRequest);
         }
         return null;
     }

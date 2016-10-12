@@ -12,8 +12,8 @@ import java.util.Map;
 
 public class ConnectionChecker {
 
-    public static GoPluginApiResponse handleCheckRepositoryConnection(GoPluginApiRequest request) {
-        HttpRepoURL repoConnection = ConnectionChecker.createRepositoryConnection(request);
+    public GoPluginApiResponse handleCheckRepositoryConnection(GoPluginApiRequest request) {
+        HttpRepoURL repoConnection = createRepositoryConnection(request);
         try {
             repoConnection.checkConnection();
         } catch (Exception e) {
@@ -25,15 +25,15 @@ public class ConnectionChecker {
         return ResponseFormatter.createResponse(200, responseMap);
     }
 
-    private static Map formatConnectionResponse(String status, String message) {
+    private Map formatConnectionResponse(String status, String message) {
         Map responseMap = new HashMap();
-        responseMap.put("status",status);
+        responseMap.put("status", status);
         List messages = Arrays.asList(message);
         responseMap.put("messages", messages);
         return responseMap;
     }
 
-    private static HttpRepoURL createRepositoryConnection(GoPluginApiRequest request) {
+    private HttpRepoURL createRepositoryConnection(GoPluginApiRequest request) {
         Map requestMap = (Map) new GsonBuilder().create().fromJson(request.requestBody(), Object.class);
         Map configMap = (Map) requestMap.get("repository-configuration");
 

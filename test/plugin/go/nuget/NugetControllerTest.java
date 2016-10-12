@@ -15,7 +15,7 @@ import java.util.Map;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class NugetPollerTest {
+public class NugetControllerTest {
 
     private static final int SUCCESS_STATUS_CODE = 200;
     private static final String REQUEST_REPOSITORY_CONFIGURATION = "repository-configuration";
@@ -23,7 +23,7 @@ public class NugetPollerTest {
     private static final String VALIDATE_REPOSITORY_CONFIGURATION = "validate-repository-configuration";
     private static final String VALIDATE_PACKAGE_CONFIGURATION = "validate-package-configuration";
 
-    NugetPoller nugetPoller;
+    NugetController nugetController;
     GoPluginApiRequest goApiPluginRequest;
 
 
@@ -36,7 +36,7 @@ public class NugetPollerTest {
 
     @Before
     public void setUp() {
-        nugetPoller = new NugetPoller();
+        nugetController = new NugetController();
         goApiPluginRequest = mock(GoPluginApiRequest.class);
 
     }
@@ -45,7 +45,7 @@ public class NugetPollerTest {
     public void shouldReturnConfigurationsWhenHandlingRepositoryConfigurationRequest() {
         when(goApiPluginRequest.requestName()).thenReturn(REQUEST_REPOSITORY_CONFIGURATION);
 
-        GoPluginApiResponse response = nugetPoller.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
 
         Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
         Assert.assertEquals(expectedRepositoryConfiguration, response.responseBody().toString());
@@ -55,7 +55,7 @@ public class NugetPollerTest {
     public void shouldReturnConfigurationsWhenHandlingPackageConfigurationRequest() {
         when(goApiPluginRequest.requestName()).thenReturn(REQUEST_PACKAGE_CONFIGURATION);
 
-        GoPluginApiResponse response = nugetPoller.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
 
         Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
         Assert.assertEquals(expectedPackageConfiguration, response.responseBody().toString());
@@ -67,7 +67,7 @@ public class NugetPollerTest {
         String invalidBody = createUrlRequestBody("");
         when(goApiPluginRequest.requestBody()).thenReturn(invalidBody);
 
-        GoPluginApiResponse response = nugetPoller.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
         List responseList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
         Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
@@ -80,7 +80,7 @@ public class NugetPollerTest {
         String validBody = createUrlRequestBody("http://testsite.com");
         when(goApiPluginRequest.requestBody()).thenReturn(validBody);
 
-        GoPluginApiResponse response = nugetPoller.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
         List responseList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
         Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
@@ -94,7 +94,7 @@ public class NugetPollerTest {
         String invalidBody = createUrlRequestBody("");
         when(goApiPluginRequest.requestBody()).thenReturn(invalidBody);
 
-        GoPluginApiResponse response = nugetPoller.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
         List responseList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
         Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
@@ -107,7 +107,7 @@ public class NugetPollerTest {
 //        String validBody = createUrlRequestBody("http://testsite.com");
 //        when(goApiPluginRequest.requestBody()).thenReturn(validBody);
 //
-//        GoPluginApiResponse response = nugetPoller.handle(goApiPluginRequest);
+//        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
 //        List responseList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 //
 //        Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
