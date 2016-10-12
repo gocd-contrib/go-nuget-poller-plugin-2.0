@@ -21,10 +21,10 @@ public class NugetController implements GoPlugin {
     private static Logger logger = Logger.getLoggerFor(NugetController.class);
 
     private static final String REQUEST_REPOSITORY_CONFIGURATION = "repository-configuration";
-    private static final String REQUEST_PACKAGE_CONFIGURATION = "package-configuration";
     private static final String VALIDATE_REPOSITORY_CONFIGURATION = "validate-repository-configuration";
-    private static final String VALIDATE_PACKAGE_CONFIGURATION = "validate-package-configuration";
     private static final String CHECK_REPOSITORY_CONNECTION = "check-repository-connection";
+    private static final String REQUEST_PACKAGE_CONFIGURATION = "package-configuration";
+    private static final String VALIDATE_PACKAGE_CONFIGURATION = "validate-package-configuration";
 
     public static final int SUCCESS_RESPONSE_CODE = 200;
 
