@@ -1,7 +1,5 @@
 package plugin.go.nuget.unit;
 
-import com.google.gson.GsonBuilder;
-import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,38 +10,34 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static utils.Constants.PACKAGE_CONFIGURATION;
 
 public class PackageConfigHandlerTest {
     PackageConfigHandler packageConfigHandler;
-    GoPluginApiRequest goPluginApiRequest;
 
     @Before
     public void setup(){
         packageConfigHandler = new PackageConfigHandler();
-        goPluginApiRequest = mock(GoPluginApiRequest.class);
     }
 
     @Test
     public void shouldErrorWhenPackageIDisMissing(){
-        when(goPluginApiRequest.requestBody()).thenReturn(createPackageConfigurationRequestBody(""));
+        Map requestBody = createPackageConfigurationRequestBody("");
 
-        List errorList = packageConfigHandler.handleValidatePackageConfiguration(goPluginApiRequest);
+        List errorList = packageConfigHandler.handleValidatePackageConfiguration(requestBody);
         Assert.assertFalse(errorList.isEmpty());
         Assert.assertThat(errorList.get(0).toString(), containsString("Package ID cannot be empty"));
     }
 
     @Test
     public void shouldNotErrorWhenPackageConfigurationsAreValid(){
-        when(goPluginApiRequest.requestBody()).thenReturn(createPackageConfigurationRequestBody("ID"));
+        Map requestBody = createPackageConfigurationRequestBody("ID");
 
-        List errorList = packageConfigHandler.handleValidatePackageConfiguration(goPluginApiRequest);
+        List errorList = packageConfigHandler.handleValidatePackageConfiguration(requestBody);
         Assert.assertTrue(errorList.isEmpty());
     }
 
-    private String createPackageConfigurationRequestBody(String packageID) {
+    private Map createPackageConfigurationRequestBody(String packageID) {
         Map packageIDMap = new HashMap();
         packageIDMap.put("value", packageID);
 
@@ -53,6 +47,6 @@ public class PackageConfigHandlerTest {
         Map requestMap = new HashMap();
         requestMap.put(PACKAGE_CONFIGURATION, packageConfigurationMap);
 
-        return new GsonBuilder().serializeNulls().create().toJson(requestMap);
+        return requestMap;
     }
 }

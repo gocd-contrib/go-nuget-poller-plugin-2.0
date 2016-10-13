@@ -1,8 +1,5 @@
 package plugin.go.nuget;
 
-import com.google.gson.GsonBuilder;
-import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +17,10 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
         return repositoryConfig;
     }
 
-    public List handleValidateRepositoryConfiguration(GoPluginApiRequest request) {
+    public List handleValidateRepositoryConfiguration(Map request) {
         List validationList = new ArrayList();
-        Map requestMap = (Map) new GsonBuilder().create().fromJson(request.requestBody(), Object.class);
-        Map configMap = (Map) requestMap.get("repository-configuration");
+
+        Map configMap = (Map) request.get("repository-configuration");
         Map urlMap = (Map) configMap.get("REPOSITORY_URL");
 
         if (urlMap.get("value").equals("")) {

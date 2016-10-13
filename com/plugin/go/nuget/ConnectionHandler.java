@@ -1,7 +1,5 @@
 package plugin.go.nuget;
 
-import com.google.gson.GsonBuilder;
-import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.tw.go.plugin.util.HttpRepoURL;
 
 import java.util.Arrays;
@@ -11,7 +9,7 @@ import java.util.Map;
 
 public class ConnectionHandler {
 
-    public Map handleCheckRepositoryConnection(GoPluginApiRequest request) {
+    public Map handleCheckRepositoryConnection(Map request) {
         HttpRepoURL repoConnection = createRepositoryConnection(request);
         try {
             repoConnection.checkConnection();
@@ -32,9 +30,8 @@ public class ConnectionHandler {
         return responseMap;
     }
 
-    private HttpRepoURL createRepositoryConnection(GoPluginApiRequest request) {
-        Map requestMap = (Map) new GsonBuilder().create().fromJson(request.requestBody(), Object.class);
-        Map configMap = (Map) requestMap.get("repository-configuration");
+    private HttpRepoURL createRepositoryConnection(Map request) {
+        Map configMap = (Map) request.get("repository-configuration");
 
         Map urlMap = (Map) configMap.get("REPOSITORY_URL");
         Map usernameMap = (Map) configMap.get("USERNAME");

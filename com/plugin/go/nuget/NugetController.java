@@ -14,6 +14,7 @@ import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import static utils.Constants.*;
 
@@ -39,17 +40,18 @@ public class NugetController implements GoPlugin {
 
         Object result = null;
         String requestName = goPluginApiRequest.requestName();
+        Map requestBodyMap = (Map) new GsonBuilder().create().fromJson(goPluginApiRequest.requestBody(), Object.class);
 
         if (requestName.equals(REPOSITORY_CONFIGURATION)) {
             result = repositoryConfigHandler.handleRepositoryConfiguration();
         } else if (requestName.equals(VALIDATE_REPOSITORY_CONFIGURATION)) {
-            result = repositoryConfigHandler.handleValidateRepositoryConfiguration(goPluginApiRequest);
+            result = repositoryConfigHandler.handleValidateRepositoryConfiguration(requestBodyMap);
         } else if (requestName.equals(CHECK_REPOSITORY_CONNECTION)) {
-            result = connectionHandler.handleCheckRepositoryConnection(goPluginApiRequest);
+            result = connectionHandler.handleCheckRepositoryConnection(requestBodyMap);
         } else if (requestName.equals(PACKAGE_CONFIGURATION)) {
             result = packageConfigs.handlePackageConfiguration();
         } else if (requestName.equals(VALIDATE_PACKAGE_CONFIGURATION)) {
-            result = packageConfigs.handleValidatePackageConfiguration(goPluginApiRequest);
+            result = packageConfigs.handleValidatePackageConfiguration(requestBodyMap);
         }
 
         if (result != null) {

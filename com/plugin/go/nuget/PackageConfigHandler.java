@@ -1,8 +1,5 @@
 package plugin.go.nuget;
 
-import com.google.gson.GsonBuilder;
-import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +15,9 @@ public class PackageConfigHandler extends PluginConfigHandler {
         return packageConfig;
     }
 
-    public List handleValidatePackageConfiguration(GoPluginApiRequest request) {
+    public List handleValidatePackageConfiguration(Map request) {
         List validationList = new ArrayList();
-        Map requestMap = (Map) new GsonBuilder().create().fromJson(request.requestBody(), Object.class);
-        Map configMap = (Map) requestMap.get("package-configuration");
+        Map configMap = (Map) request.get("package-configuration");
         Map packageIDMap = (Map) configMap.get("PACKAGE_ID");
 
         if(packageIDMap.get("value").equals("")) {
