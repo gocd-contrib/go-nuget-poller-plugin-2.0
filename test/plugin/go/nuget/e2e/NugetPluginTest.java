@@ -23,8 +23,7 @@ public class NugetPluginTest {
             "\"USERNAME\":{\"display-order\":\"1\",\"display-name\":\"Username\",\"part-of-identity\":false,\"secure\":true,\"required\":false}," +
             "\"REPOSITORY_URL\":{\"display-order\":\"0\",\"display-name\":\"Repository Url\",\"part-of-identity\":true,\"secure\":false,\"required\":true}}";
 
-    String expectedPackageConfiguration = "{\"PACKAGE_NAME\":{\"display-order\":\"1\",\"display-name\":\"Package Name\",\"part-of-identity\":true,\"secure\":false,\"required\":true}," +
-            "\"PACKAGE_ID\":{\"display-order\":\"0\",\"display-name\":\"Package ID\",\"part-of-identity\":true,\"secure\":false,\"required\":true}}";
+    String expectedPackageConfiguration = "{\"PACKAGE_ID\":{\"display-order\":\"0\",\"display-name\":\"Package ID\",\"part-of-identity\":true,\"secure\":false,\"required\":true}}";
 
     @Before
     public void setUp() {

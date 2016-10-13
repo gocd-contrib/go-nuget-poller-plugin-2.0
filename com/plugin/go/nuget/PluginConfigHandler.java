@@ -4,7 +4,7 @@ package plugin.go.nuget;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PluginConfigs {
+public class PluginConfigHandler {
 
     public static Map createConfigurationField(String displayName, String displayOrder, boolean secure, boolean partOfIdentity, boolean required) {
         Map configMap = new HashMap();

@@ -2,14 +2,13 @@ package plugin.go.nuget;
 
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
-import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RepositoryConfigs extends PluginConfigs{
+public class RepositoryConfigHandler extends PluginConfigHandler {
 
     public Map handleRepositoryConfiguration() {
         Map repositoryConfig = new HashMap();

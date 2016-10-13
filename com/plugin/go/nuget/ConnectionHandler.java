@@ -2,7 +2,6 @@ package plugin.go.nuget;
 
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
-import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import com.tw.go.plugin.util.HttpRepoURL;
 
 import java.util.Arrays;
@@ -10,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConnectionChecker {
+public class ConnectionHandler {
 
     public Map handleCheckRepositoryConnection(GoPluginApiRequest request) {
         HttpRepoURL repoConnection = createRepositoryConnection(request);
