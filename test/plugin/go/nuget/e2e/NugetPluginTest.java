@@ -20,7 +20,7 @@ public class NugetPluginTest {
     GoPluginApiRequest goApiPluginRequest;
 
     String expectedRepositoryConfiguration = "{\"PASSWORD\":{\"display-order\":\"2\",\"display-name\":\"Password\",\"part-of-identity\":false,\"secure\":true,\"required\":false}," +
-            "\"USERNAME\":{\"display-order\":\"1\",\"display-name\":\"Username\",\"part-of-identity\":false,\"secure\":true,\"required\":false}," +
+            "\"USERNAME\":{\"display-order\":\"1\",\"display-name\":\"Username\",\"part-of-identity\":false,\"secure\":false,\"required\":false}," +
             "\"REPOSITORY_URL\":{\"display-order\":\"0\",\"display-name\":\"Repository Url\",\"part-of-identity\":true,\"secure\":false,\"required\":true}}";
 
     String expectedPackageConfiguration = "{\"PACKAGE_ID\":{\"display-order\":\"0\",\"display-name\":\"Package ID\",\"part-of-identity\":true,\"secure\":false,\"required\":true}}";

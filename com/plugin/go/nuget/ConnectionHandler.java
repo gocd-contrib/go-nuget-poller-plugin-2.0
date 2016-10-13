@@ -41,10 +41,20 @@ public class ConnectionHandler {
         Map passwordMap = (Map) configMap.get("PASSWORD");
 
         String url = (String) urlMap.get("value");
+        // We use $metada because nuget uses the ODATA format.
+        // This distinguishes nuget feeds from generic sites (though it would accept as valid a non-nuget feed ODATA site)
+        url = metadataUrl(url);
         String username = (String) usernameMap.get("value");
         String password = (String) passwordMap.get("value");
 
         HttpRepoURL connection = new HttpRepoURL(url, username, password);
         return connection;
+    }
+
+    private String metadataUrl(String url) {
+        if(!url.endsWith("/")) {
+            url += "/";
+        }
+        return url + "$metadata";
     }
 }
