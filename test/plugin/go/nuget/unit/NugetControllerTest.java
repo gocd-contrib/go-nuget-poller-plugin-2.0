@@ -1,4 +1,4 @@
-package plugin.go.nuget;
+package plugin.go.nuget.unit;
 
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
@@ -7,6 +7,7 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import plugin.go.nuget.NugetController;
 
 import java.util.HashMap;
 import java.util.List;
@@ -61,45 +62,19 @@ public class NugetControllerTest {
         Assert.assertEquals(expectedPackageConfiguration, response.responseBody().toString());
     }
 
-    @Test
-         public void shouldErrorWhenInvalidRepositoryConfiguration(){
-        when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_REPOSITORY_CONFIGURATION);
-        String invalidBody = createUrlRequestBody("");
-        when(goApiPluginRequest.requestBody()).thenReturn(invalidBody);
 
-        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
-        List responseList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
-
-        Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
-        Assert.assertFalse(responseList.isEmpty());
-    }
-
-    @Test
-    public void shouldReturnEmptyErrorListWhenValidRepositoryConfigurations(){
-        when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_REPOSITORY_CONFIGURATION);
-        String validBody = createUrlRequestBody("http://testsite.com");
-        when(goApiPluginRequest.requestBody()).thenReturn(validBody);
-
-        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
-        List responseList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
-
-        Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
-        Assert.assertTrue(responseList.isEmpty());
-
-    }
-
-    @Test
-    public void shouldErrorWhenInvalidPackageConfiguration(){
-        when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_PACKAGE_CONFIGURATION);
-        String invalidBody = createUrlRequestBody("");
-        when(goApiPluginRequest.requestBody()).thenReturn(invalidBody);
-
-        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
-        List responseList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
-
-        Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
-        Assert.assertFalse(responseList.isEmpty());
-    }
+//    @Test
+//    public void shouldErrorWhenInvalidPackageConfiguration(){
+//        when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_PACKAGE_CONFIGURATION);
+//        String invalidBody = createUrlRequestBody("");
+//        when(goApiPluginRequest.requestBody()).thenReturn(invalidBody);
+//
+//        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+//        List responseList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
+//
+//        Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
+//        Assert.assertFalse(responseList.isEmpty());
+//    }
 
 //    @Test
 //    public void shouldReturnEmptyErrorListWhenValidPackageConfigurations(){

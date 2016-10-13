@@ -17,8 +17,6 @@ public class PackageConfigs extends PluginConfigs{
         return packageConfig;
     }
 
-
-
     public Map handleValidatePackageConfiguration(GoPluginApiRequest goPluginApiRequest) {
         return null;
     }

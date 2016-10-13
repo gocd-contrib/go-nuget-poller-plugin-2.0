@@ -12,13 +12,16 @@ import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+
 import java.util.*;
 
 @Extension
 public class NugetController implements GoPlugin {
     private GoApplicationAccessor accessor;
-
     private static Logger logger = Logger.getLoggerFor(NugetController.class);
+    private PackageConfigs packageConfigs = new PackageConfigs();
+    private RepositoryConfigs repositoryConfigs = new RepositoryConfigs();
+    private ConnectionChecker connectionChecker = new ConnectionChecker();
 
     private static final String REQUEST_REPOSITORY_CONFIGURATION = "repository-configuration";
     private static final String VALIDATE_REPOSITORY_CONFIGURATION = "validate-repository-configuration";
@@ -34,26 +37,30 @@ public class NugetController implements GoPlugin {
 
     public GoPluginApiResponse handle(GoPluginApiRequest goPluginApiRequest) {
 
-        PackageConfigs packageConfigs = new PackageConfigs();
-        RepositoryConfigs repositoryConfigs = new RepositoryConfigs();
-        ConnectionChecker connectionChecker = new ConnectionChecker();
-
         logger.info("Request name " + goPluginApiRequest.requestName());
         logger.info("Request body " + goPluginApiRequest.requestBody());
         logger.info("Request body " + goPluginApiRequest.requestParameters());
         logger.info("Request body " + goPluginApiRequest.requestHeaders());
 
-        if (goPluginApiRequest.requestName().equals(REQUEST_REPOSITORY_CONFIGURATION)) {
-            return createResponse(SUCCESS_RESPONSE_CODE, repositoryConfigs.handleRepositoryConfiguration());
-        } else if (goPluginApiRequest.requestName().equals(REQUEST_PACKAGE_CONFIGURATION)) {
-            return createResponse(SUCCESS_RESPONSE_CODE, packageConfigs.handlePackageConfiguration());
-        } else if (goPluginApiRequest.requestName().equals(VALIDATE_REPOSITORY_CONFIGURATION)) {
-            return createResponse(SUCCESS_RESPONSE_CODE, repositoryConfigs.handleValidateRepositoryConfiguration(goPluginApiRequest));
-        } else if (goPluginApiRequest.requestName().equals(VALIDATE_PACKAGE_CONFIGURATION)) {
-            return createResponse(SUCCESS_RESPONSE_CODE, packageConfigs.handleValidatePackageConfiguration(goPluginApiRequest));
-        } else if (goPluginApiRequest.requestName().equals(CHECK_REPOSITORY_CONNECTION)) {
-            return createResponse(SUCCESS_RESPONSE_CODE, connectionChecker.handleCheckRepositoryConnection(goPluginApiRequest));
+        Object result = null;
+        String requestName = goPluginApiRequest.requestName();
+
+        if (requestName.equals(REQUEST_REPOSITORY_CONFIGURATION)) {
+            result = repositoryConfigs.handleRepositoryConfiguration();
+        } else if (requestName.equals(VALIDATE_REPOSITORY_CONFIGURATION)) {
+            result = repositoryConfigs.handleValidateRepositoryConfiguration(goPluginApiRequest);
+        } else if (requestName.equals(CHECK_REPOSITORY_CONNECTION)) {
+            result = connectionChecker.handleCheckRepositoryConnection(goPluginApiRequest);
+        } else if (requestName.equals(REQUEST_PACKAGE_CONFIGURATION)) {
+            result = packageConfigs.handlePackageConfiguration();
+        } else if (requestName.equals(VALIDATE_PACKAGE_CONFIGURATION)) {
+            result = packageConfigs.handleValidatePackageConfiguration(goPluginApiRequest);
         }
+
+        if (result != null) {
+            return createResponse(SUCCESS_RESPONSE_CODE, result);
+        }
+
         return null;
     }
 
