@@ -7,6 +7,12 @@ import java.util.Map;
 
 public class RepositoryConfigHandler extends PluginConfigHandler {
 
+    private ConnectionHandler connectionHandler;
+
+    public RepositoryConfigHandler (ConnectionHandler connectionHandler){
+        this.connectionHandler = connectionHandler;
+    }
+
     public Map handleRepositoryConfiguration() {
         Map repositoryConfig = new HashMap();
 
@@ -34,4 +40,29 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
     }
 
 
+    public Map handleCheckRepositoryConnection(Map request) {
+        Map configMap = (Map) request.get("repository-configuration");
+
+        String repoUrl = parseValueFromEmbeddedMap(configMap, "REPOSITORY_URL");
+        String username = parseValueFromEmbeddedMap(configMap, "USERNAME");
+        String password = parseValueFromEmbeddedMap(configMap, "PASSWORD");
+        repoUrl = metadataUrl(repoUrl);
+
+        return connectionHandler.checkConnectionToUrl(repoUrl, username, password);
+    }
+
+    private String parseValueFromEmbeddedMap(Map configMap, String fieldName) {
+        Map fieldMap = (Map) configMap.get(fieldName);
+        String value = (String) fieldMap.get("value");
+        return value;
+    }
+
+    // We use $metada because nuget uses the ODATA format.
+    // This distinguishes nuget feeds from generic sites (though it would accept as valid a non-nuget feed ODATA site)
+    private String metadataUrl(String url) {
+        if(!url.endsWith("/")) {
+            url += "/";
+        }
+        return url + "$metadata";
+    }
 }

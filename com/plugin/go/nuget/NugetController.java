@@ -22,9 +22,9 @@ import static utils.Constants.*;
 public class NugetController implements GoPlugin {
     private GoApplicationAccessor accessor;
     private static Logger logger = Logger.getLoggerFor(NugetController.class);
-    private PackageConfigHandler packageConfigs = new PackageConfigHandler();
-    private RepositoryConfigHandler repositoryConfigHandler = new RepositoryConfigHandler();
     private ConnectionHandler connectionHandler = new ConnectionHandler();
+    private PackageConfigHandler packageConfigs = new PackageConfigHandler();
+    private RepositoryConfigHandler repositoryConfigHandler = new RepositoryConfigHandler(connectionHandler);
 
 
     public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor) {
@@ -47,7 +47,7 @@ public class NugetController implements GoPlugin {
         } else if (requestName.equals(VALIDATE_REPOSITORY_CONFIGURATION)) {
             result = repositoryConfigHandler.handleValidateRepositoryConfiguration(requestBodyMap);
         } else if (requestName.equals(CHECK_REPOSITORY_CONNECTION)) {
-            result = connectionHandler.handleCheckRepositoryConnection(requestBodyMap);
+            result = repositoryConfigHandler.handleCheckRepositoryConnection(requestBodyMap);
         } else if (requestName.equals(PACKAGE_CONFIGURATION)) {
             result = packageConfigs.handlePackageConfiguration();
         } else if (requestName.equals(VALIDATE_PACKAGE_CONFIGURATION)) {
