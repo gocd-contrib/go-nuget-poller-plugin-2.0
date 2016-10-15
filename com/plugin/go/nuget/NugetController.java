@@ -1,6 +1,3 @@
-/**
- * Created by alisonpolton-simon on 10/7/16.
- */
 package plugin.go.nuget;
 
 import com.google.gson.GsonBuilder;
@@ -23,7 +20,7 @@ public class NugetController implements GoPlugin {
     private GoApplicationAccessor accessor;
     private static Logger logger = Logger.getLoggerFor(NugetController.class);
     private ConnectionHandler connectionHandler = new ConnectionHandler();
-    private PackageConfigHandler packageConfigs = new PackageConfigHandler();
+    private PackageConfigHandler packageConfigHandler = new PackageConfigHandler(connectionHandler);
     private RepositoryConfigHandler repositoryConfigHandler = new RepositoryConfigHandler(connectionHandler);
 
 
@@ -49,9 +46,11 @@ public class NugetController implements GoPlugin {
         } else if (requestName.equals(CHECK_REPOSITORY_CONNECTION)) {
             result = repositoryConfigHandler.handleCheckRepositoryConnection(requestBodyMap);
         } else if (requestName.equals(PACKAGE_CONFIGURATION)) {
-            result = packageConfigs.handlePackageConfiguration();
+            result = packageConfigHandler.handlePackageConfiguration();
         } else if (requestName.equals(VALIDATE_PACKAGE_CONFIGURATION)) {
-            result = packageConfigs.handleValidatePackageConfiguration(requestBodyMap);
+            result = packageConfigHandler.handleValidatePackageConfiguration(requestBodyMap);
+        } else if(requestName.equals(LATEST_REVISION)){
+            result = packageConfigHandler.handleLatestRevision(requestBodyMap);
         }
 
         if (result != null) {
