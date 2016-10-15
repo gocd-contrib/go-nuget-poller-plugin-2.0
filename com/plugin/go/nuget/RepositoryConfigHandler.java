@@ -39,7 +39,6 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
         return validationList;
     }
 
-
     public Map handleCheckRepositoryConnection(Map request) {
         Map configMap = (Map) request.get("repository-configuration");
 
