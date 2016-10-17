@@ -4,7 +4,6 @@ import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Document;
 import plugin.go.nuget.ConnectionHandler;
 import plugin.go.nuget.NuGetFeedDocument;
 import plugin.go.nuget.PackageConfigHandler;
@@ -26,6 +25,7 @@ public class PackageConfigHandlerTest {
     private static final String USERNAME = "SOME_USERNAME";
     private static final String PASSWORD = "SOME_PASSWORD";
     private static final String QUERYSTRING = "/GetUpdates()?packageIds='NUnit'&versions='0.0.1'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+    private static final String PACKAGE_ID = "NUnit";
 
     PackageConfigHandler packageConfigHandler;
     ConnectionHandler connectionHandler;
@@ -61,7 +61,7 @@ public class PackageConfigHandlerTest {
         when(mockDocument.getPackageRevision(false)).thenReturn(packageRevision);
         when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(mockDocument);
 
-        Map revisionMap = packageConfigHandler.handleLatestRevision(createUrlRequestBody(URL, USERNAME, PASSWORD));
+        Map revisionMap = packageConfigHandler.handleLatestRevision(createMapWithPackageAndRepoConfigs(URL, USERNAME, PASSWORD, PACKAGE_ID));
 
         verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
         Assert.assertEquals(packageRevision.getRevision(), revisionMap.get("revision"));
@@ -74,7 +74,7 @@ public class PackageConfigHandlerTest {
     @Test
     public void shouldReturnEmptyMapIfNoPackageIsFound(){
         when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
-        Map revisionMap = packageConfigHandler.handleLatestRevision(createUrlRequestBody(URL, USERNAME, PASSWORD));
+        Map revisionMap = packageConfigHandler.handleLatestRevision(createMapWithPackageAndRepoConfigs(URL, USERNAME, PASSWORD, PACKAGE_ID));
         Assert.assertTrue(revisionMap.isEmpty());
     }
 
@@ -92,7 +92,7 @@ public class PackageConfigHandlerTest {
         return requestMap;
     }
 
-    private Map createUrlRequestBody(String url, String username, String password) {
+    private Map createRepositoryConfigurationRequestBody(String url, String username, String password) {
         Map urlMap = new HashMap();
         urlMap.put("value", url);
         Map fieldsMap = new HashMap();
@@ -106,5 +106,14 @@ public class PackageConfigHandlerTest {
         Map bodyMap = new HashMap();
         bodyMap.put(REPOSITORY_CONFIGURATION, fieldsMap);
         return bodyMap;
+    }
+
+    private Map createMapWithPackageAndRepoConfigs(String url, String username, String password, String packageID){
+        Map repoConfigs = createRepositoryConfigurationRequestBody(url,username,password);
+        Map packageConfigs = createPackageConfigurationRequestBody(packageID);
+        Map compositeMap = new HashMap();
+        compositeMap.putAll(repoConfigs);
+        compositeMap.putAll(packageConfigs);
+        return compositeMap;
     }
 }

@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static utils.Constants.*;
+
 public class PackageConfigHandler extends PluginConfigHandler {
 
     private ConnectionHandler connectionHandler;
@@ -42,13 +44,16 @@ public class PackageConfigHandler extends PluginConfigHandler {
 
     public Map handleLatestRevision(Map request) {
         // Use the Connection Handler to get the collection of data
-        Map configMap = (Map) request.get("repository-configuration");
+        Map repoConfigMap = (Map) request.get(REPOSITORY_CONFIGURATION);
 
-        String repoUrl = parseValueFromEmbeddedMap(configMap, "REPOSITORY_URL");
-        String username = parseValueFromEmbeddedMap(configMap, "USERNAME");
-        String password = parseValueFromEmbeddedMap(configMap, "PASSWORD");
+        String repoUrl = parseValueFromEmbeddedMap(repoConfigMap, "REPOSITORY_URL");
+        String username = parseValueFromEmbeddedMap(repoConfigMap, "USERNAME");
+        String password = parseValueFromEmbeddedMap(repoConfigMap, "PASSWORD");
 
-        NuGetFeedDocument nuGetFeedDocument = connectionHandler.getNuGetFeedDocument(repoUrl, getQuery(), username, password);
+        Map packageConfigMap = (Map) request.get(PACKAGE_CONFIGURATION);
+        String packageId = parseValueFromEmbeddedMap(packageConfigMap, "PACKAGE_ID");
+
+        NuGetFeedDocument nuGetFeedDocument = connectionHandler.getNuGetFeedDocument(repoUrl, getQuery(packageId), username, password);
         return parsePackageDataFromDocument(nuGetFeedDocument);
     }
 
@@ -77,10 +82,10 @@ public class PackageConfigHandler extends PluginConfigHandler {
         return value;
     }
 
-    private String getQuery() {
+    private String getQuery(String packageId) {
         StringBuilder query = new StringBuilder();
         query.append("/GetUpdates()?");
-        query.append(String.format("packageIds='%s'", "NUnit"));
+        query.append(String.format("packageIds='%s'", packageId));
         query.append(String.format("&versions='%s'", "0.0.1"));
         query.append("&includePrerelease=").append(true);
         query.append("&includeAllVersions=true");//has to be true, filter gets applied later
