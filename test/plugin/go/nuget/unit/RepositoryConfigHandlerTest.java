@@ -50,7 +50,7 @@ public class RepositoryConfigHandlerTest {
 
         repositoryConfigHandler.handleCheckRepositoryConnection(createUrlRequestBody(SOME_URL, SOME_USERNAME, SOME_PASSWORD));
 
-        verify(connectionHandler).checkConnectionToUrl(SOME_URL + "$metadata", SOME_USERNAME, SOME_PASSWORD);
+        verify(connectionHandler).checkConnectionToUrlWithMetadata(SOME_URL, SOME_USERNAME, SOME_PASSWORD);
     }
 
 

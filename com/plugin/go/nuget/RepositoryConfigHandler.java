@@ -45,9 +45,8 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
         String repoUrl = parseValueFromEmbeddedMap(configMap, "REPOSITORY_URL");
         String username = parseValueFromEmbeddedMap(configMap, "USERNAME");
         String password = parseValueFromEmbeddedMap(configMap, "PASSWORD");
-        repoUrl = metadataUrl(repoUrl);
 
-        return connectionHandler.checkConnectionToUrl(repoUrl, username, password);
+        return connectionHandler.checkConnectionToUrlWithMetadata(repoUrl, username, password);
     }
 
     private String parseValueFromEmbeddedMap(Map configMap, String fieldName) {
@@ -56,12 +55,5 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
         return value;
     }
 
-    // We use $metada because nuget uses the ODATA format.
-    // This distinguishes nuget feeds from generic sites (though it would accept as valid a non-nuget feed ODATA site)
-    private String metadataUrl(String url) {
-        if(!url.endsWith("/")) {
-            url += "/";
-        }
-        return url + "$metadata";
-    }
+
 }

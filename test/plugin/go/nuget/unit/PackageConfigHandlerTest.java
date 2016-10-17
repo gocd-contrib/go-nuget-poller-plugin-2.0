@@ -22,9 +22,10 @@ import static utils.Constants.PACKAGE_CONFIGURATION;
 import static utils.Constants.REPOSITORY_CONFIGURATION;
 
 public class PackageConfigHandlerTest {
-    private static String URL = "SOME_URL";
-    private static String USERNAME = "SOME_USERNAME";
-    private static String PASSWORD = "SOME_PASSWORD";
+    private static final String URL = "SOME_URL";
+    private static final String USERNAME = "SOME_USERNAME";
+    private static final String PASSWORD = "SOME_PASSWORD";
+    private static final String QUERYSTRING = "/GetUpdates()?packageIds='NUnit'&versions='0.0.1'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
 
     PackageConfigHandler packageConfigHandler;
     ConnectionHandler connectionHandler;
@@ -58,11 +59,11 @@ public class PackageConfigHandlerTest {
 
         NuGetFeedDocument mockDocument = mock(NuGetFeedDocument.class);
         when(mockDocument.getPackageRevision(false)).thenReturn(packageRevision);
-        when(connectionHandler.getNuGetFeedDocument(URL, USERNAME, PASSWORD)).thenReturn(mockDocument);
+        when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(mockDocument);
 
         Map revisionMap = packageConfigHandler.handleLatestRevision(createUrlRequestBody(URL, USERNAME, PASSWORD));
 
-        verify(connectionHandler).getNuGetFeedDocument(URL, USERNAME, PASSWORD);
+        verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
         Assert.assertEquals(packageRevision.getRevision(), revisionMap.get("revision"));
         Assert.assertEquals(packageRevision.getTimestamp(), revisionMap.get("timestamp"));
         Assert.assertEquals(packageRevision.getUser(), revisionMap.get("user"));
@@ -72,7 +73,7 @@ public class PackageConfigHandlerTest {
 
     @Test
     public void shouldReturnEmptyMapIfNoPackageIsFound(){
-        when(connectionHandler.getNuGetFeedDocument(URL, USERNAME, PASSWORD)).thenReturn(null);
+        when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
         Map revisionMap = packageConfigHandler.handleLatestRevision(createUrlRequestBody(URL, USERNAME, PASSWORD));
         Assert.assertTrue(revisionMap.isEmpty());
     }
