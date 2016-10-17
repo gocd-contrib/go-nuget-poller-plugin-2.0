@@ -3,15 +3,15 @@ package plugin.go.nuget;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PackageConfigHandler extends PluginConfigHandler {
 
     private ConnectionHandler connectionHandler;
     private static Logger logger = Logger.getLoggerFor(PluginConfigHandler.class);
-
-    //TODO Build me
-    private final String hardcodedQueryString = "GetUpdates()?packageIds='NUnit'&versions='3.5.0'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
 
     public PackageConfigHandler(ConnectionHandler connectionHandler) {
         this.connectionHandler = connectionHandler;
@@ -48,13 +48,11 @@ public class PackageConfigHandler extends PluginConfigHandler {
         String username = parseValueFromEmbeddedMap(configMap, "USERNAME");
         String password = parseValueFromEmbeddedMap(configMap, "PASSWORD");
 
-        logger.info("We are about to make the connection " +repoUrl + hardcodedQueryString);
-        NuGetFeedDocument nuGetFeedDocument = connectionHandler.getNuGetFeedDocument(repoUrl + hardcodedQueryString, username, password);
+        NuGetFeedDocument nuGetFeedDocument = connectionHandler.getNuGetFeedDocument(repoUrl, getQuery(), username, password);
         return parsePackageDataFromDocument(nuGetFeedDocument);
     }
 
     private Map parsePackageDataFromDocument(NuGetFeedDocument nuGetFeedDocument) {
-        logger.info("parsing the package data: "+ nuGetFeedDocument.getPackageVersion());
         //TODO handle this properly...
         Map packageRevisionMap = new HashMap();
         if(nuGetFeedDocument == null) {
@@ -77,5 +75,19 @@ public class PackageConfigHandler extends PluginConfigHandler {
         Map fieldMap = (Map) configMap.get(fieldName);
         String value = (String) fieldMap.get("value");
         return value;
+    }
+
+    private String getQuery() {
+        StringBuilder query = new StringBuilder();
+        query.append("/GetUpdates()?");
+        query.append(String.format("packageIds='%s'", "NUnit"));
+        query.append(String.format("&versions='%s'", "0.0.1"));
+        query.append("&includePrerelease=").append(true);
+        query.append("&includeAllVersions=true");//has to be true, filter gets applied later
+//        if (upperBoundGiven()) {
+//            query.append("&$filter=Version%20lt%20'").append(pollVersionTo).append("'");
+//        }
+        query.append("&$orderby=Version%20desc&$top=1");
+        return query.toString();
     }
 }

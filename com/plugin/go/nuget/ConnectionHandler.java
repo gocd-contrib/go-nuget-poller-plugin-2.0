@@ -13,8 +13,8 @@ import java.util.Map;
 public class ConnectionHandler {
     private static Logger logger = Logger.getLoggerFor(ConnectionHandler.class);
 
-    public Map checkConnectionToUrl(String url, String username, String password) {
-        HttpRepoURL repoConnection =  new HttpRepoURL(url, username, password);
+    public Map checkConnectionToUrlWithMetadata(String url, String username, String password) {
+        HttpRepoURL repoConnection =  new HttpRepoURL(metadataUrl(url), username, password);
         try {
             repoConnection.checkConnection();
         } catch (Exception e) {
@@ -26,12 +26,12 @@ public class ConnectionHandler {
         return responseMap;
     }
 
-    public NuGetFeedDocument getNuGetFeedDocument(String url, String username, String password) {
-        Map repoConnectionResponseMap = checkConnectionToUrl(url, username, password);
+    public NuGetFeedDocument getNuGetFeedDocument(String baseUrl, String queryParams, String username, String password) {
+        Map repoConnectionResponseMap = checkConnectionToUrlWithMetadata(baseUrl, username, password);
         if(!repoConnectionSuccessful(repoConnectionResponseMap)){
             return null;
         }
-        Document xmlDocument = new Feed(url).download();
+        Document xmlDocument = new Feed(baseUrl + queryParams).download();
         return new NuGetFeedDocument(xmlDocument);
     }
 
@@ -47,5 +47,14 @@ public class ConnectionHandler {
         if (repoConnectionResponseMap.get("status") == "failure") {
             return false;
         } else return true;
+    }
+
+    // We use $metada because nuget uses the ODATA format.
+    // This distinguishes nuget feeds from generic sites (though it would accept as valid a non-nuget feed ODATA site)
+    private String metadataUrl(String url) {
+        if(!url.endsWith("/")) {
+            url += "/";
+        }
+        return url + "$metadata";
     }
 }

@@ -3,7 +3,6 @@ package http.utils;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.tw.go.plugin.util.HttpRepoURL;
 import org.w3c.dom.Document;
@@ -33,8 +32,7 @@ public class Feed {
             }
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
-            Document parsedDocument = factory.newDocumentBuilder().parse(response.body().byteStream());
-            return parsedDocument;
+            return factory.newDocumentBuilder().parse(response.body().byteStream());
 
         } catch (Exception ex) {
             String message = String.format("%s (%s) while getting package feed for : %s ", ex.getClass().getSimpleName(), ex.getMessage(), url);
@@ -42,6 +40,7 @@ public class Feed {
             throw new RuntimeException(message, ex);
         }
     }
+
 }
 
 
