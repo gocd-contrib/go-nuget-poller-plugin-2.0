@@ -2,7 +2,6 @@ package plugin.go.nuget;
 
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.tw.go.plugin.util.HttpRepoURL;
-import http.utils.Feed;
 import org.w3c.dom.Document;
 
 import javax.xml.transform.Transformer;

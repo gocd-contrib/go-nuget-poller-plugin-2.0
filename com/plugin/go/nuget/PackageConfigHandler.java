@@ -3,11 +3,11 @@ package plugin.go.nuget;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static utils.Constants.*;
+import static utils.Constants.PACKAGE_CONFIGURATION;
+import static utils.Constants.REPOSITORY_CONFIGURATION;
 
 public class PackageConfigHandler extends PluginConfigHandler {
 
@@ -41,6 +41,30 @@ public class PackageConfigHandler extends PluginConfigHandler {
         return validationList;
     }
 
+    public Map handleCheckPackageConnection(Map requestBodyMap) {
+        Map response = new HashMap();
+        List messages = new ArrayList();
+        Map packageRevisionResponse;
+
+        try {
+            packageRevisionResponse = handleLatestRevision(requestBodyMap);
+            String revision = (String) packageRevisionResponse.get("revision");
+            if(revision!=null){
+                messages.add("Successfully found revision: " + revision);
+                response.put("status", "success");
+                response.put("messages", messages);
+                return response;
+            }
+        } catch (RuntimeException e) {
+            logger.info(e.getMessage());
+        }
+
+        messages.add("No packages found");
+        response.put("status", "failure");
+        response.put("messages", messages);
+        return response;
+    }
+
     public Map handleLatestRevision(Map request) {
         // Use the Connection Handler to get the collection of data
         Map repoConfigMap = (Map) request.get(REPOSITORY_CONFIGURATION);
@@ -59,7 +83,7 @@ public class PackageConfigHandler extends PluginConfigHandler {
     private Map parsePackageDataFromDocument(NuGetFeedDocument nuGetFeedDocument) {
         //TODO handle this properly...
         Map packageRevisionMap = new HashMap();
-        if(nuGetFeedDocument == null) {
+        if (nuGetFeedDocument == null) {
             return packageRevisionMap;
         }
         PackageRevision packageRevision = nuGetFeedDocument.getPackageRevision(false);
