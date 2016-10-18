@@ -3,10 +3,9 @@ package plugin.go.nuget;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static utils.Constants.*;
 
@@ -65,13 +64,19 @@ public class PackageConfigHandler extends PluginConfigHandler {
         }
         PackageRevision packageRevision = nuGetFeedDocument.getPackageRevision(false);
         packageRevisionMap.put("revision", packageRevision.getRevision());
-        packageRevisionMap.put("timestamp", packageRevision.getTimestamp());
+        packageRevisionMap.put("timestamp", formatTimestamp(packageRevision.getTimestamp()));
         packageRevisionMap.put("user", packageRevision.getUser());
         packageRevisionMap.put("revisionComment", packageRevision.getRevisionComment());
         packageRevisionMap.put("trackbackUrl", packageRevision.getTrackbackUrl());
         packageRevisionMap.put("data", packageRevision.getData());
 
         return packageRevisionMap;
+    }
+
+    private String formatTimestamp(Date timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        String date = dateFormat.format(timestamp);
+        return date;
     }
 
     private String parseValueFromEmbeddedMap(Map configMap, String fieldName) {

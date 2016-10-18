@@ -5,6 +5,12 @@ import com.tw.go.plugin.util.HttpRepoURL;
 import http.utils.Feed;
 import org.w3c.dom.Document;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +37,14 @@ public class ConnectionHandler {
         if(!repoConnectionSuccessful(repoConnectionResponseMap)){
             return null;
         }
-        Document xmlDocument = new Feed(baseUrl + queryParams).download();
-        return new NuGetFeedDocument(xmlDocument);
+        try {
+            Document xmlDocument = new HttpRepoURL(baseUrl, username, password).download(baseUrl + queryParams);
+            logger.info("Package information is \n" + convertDocumentToString(xmlDocument));
+            return new NuGetFeedDocument(xmlDocument);
+        } catch(RuntimeException e) {
+            logger.info(e.getMessage());
+        }
+        return null;
     }
 
     private Map formatConnectionResponse(String status, String message) {
@@ -56,5 +68,23 @@ public class ConnectionHandler {
             url += "/";
         }
         return url + "$metadata";
+    }
+
+    private static String convertDocumentToString(Document doc) {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = tf.newTransformer();
+            // below code to remove XML declaration
+            // transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(doc), new StreamResult(writer));
+            String output = writer.getBuffer().toString();
+            return output;
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
