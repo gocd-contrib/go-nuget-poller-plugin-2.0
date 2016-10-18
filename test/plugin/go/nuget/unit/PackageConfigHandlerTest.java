@@ -16,9 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static utils.Constants.PACKAGE_CONFIGURATION;
 import static utils.Constants.REPOSITORY_CONFIGURATION;
 
@@ -82,10 +80,51 @@ public class PackageConfigHandlerTest {
     }
 
     @Test
-    public void shouldReturnEmptyMapIfNoPackageIsFound(){
+    public void shouldReturnEmptyMapIfNoPackageIsFound() {
         when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
         Map revisionMap = packageConfigHandler.handleLatestRevision(createMapWithPackageAndRepoConfigs(URL, USERNAME, PASSWORD, PACKAGE_ID));
         Assert.assertTrue(revisionMap.isEmpty());
+    }
+
+    @Test
+    public void shouldFailIfPackageIsNull() {
+        when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
+
+        Map revisionMap = packageConfigHandler.handleCheckPackageConnection(createMapWithPackageAndRepoConfigs(URL, USERNAME, PASSWORD, PACKAGE_ID));
+
+        verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
+
+        Assert.assertEquals("failure", revisionMap.get("status"));
+        Assert.assertEquals(((List) revisionMap.get("messages")).get(0), "No packages found");
+    }
+
+    @Test
+    public void shouldFailIfPackageIsEmptyMap() {
+        when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
+
+        Map revisionMap = packageConfigHandler.handleCheckPackageConnection(createMapWithPackageAndRepoConfigs(URL, USERNAME, PASSWORD, PACKAGE_ID));
+
+        verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
+
+        Assert.assertEquals("failure", revisionMap.get("status"));
+        Assert.assertEquals(((List) revisionMap.get("messages")).get(0), "No packages found");
+    }
+
+
+    @Test
+    public void shouldSucceedIfPackageExists() {
+        String revision = "NUnit3.5.1";
+        PackageRevision packageRevision = new PackageRevision(revision, new Date(), "USER", "REVISION_COMMENT", "TRACKBACK_URL", new HashMap());
+        NuGetFeedDocument mockDocument = mock(NuGetFeedDocument.class);
+        when(mockDocument.getPackageRevision(false)).thenReturn(packageRevision);
+        when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(mockDocument);
+
+        Map revisionMap = packageConfigHandler.handleCheckPackageConnection(createMapWithPackageAndRepoConfigs(URL, USERNAME, PASSWORD, PACKAGE_ID));
+
+        verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
+
+        Assert.assertEquals("success", revisionMap.get("status"));
+        Assert.assertEquals(((List) revisionMap.get("messages")).get(0), "Successfully found revision: " + revision);
     }
 
 
@@ -118,8 +157,8 @@ public class PackageConfigHandlerTest {
         return bodyMap;
     }
 
-    private Map createMapWithPackageAndRepoConfigs(String url, String username, String password, String packageID){
-        Map repoConfigs = createRepositoryConfigurationRequestBody(url,username,password);
+    private Map createMapWithPackageAndRepoConfigs(String url, String username, String password, String packageID) {
+        Map repoConfigs = createRepositoryConfigurationRequestBody(url, username, password);
         Map packageConfigs = createPackageConfigurationRequestBody(packageID);
         Map compositeMap = new HashMap();
         compositeMap.putAll(repoConfigs);
