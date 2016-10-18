@@ -8,6 +8,8 @@ import plugin.go.nuget.ConnectionHandler;
 import plugin.go.nuget.NuGetFeedDocument;
 import plugin.go.nuget.PackageConfigHandler;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +57,15 @@ public class PackageConfigHandlerTest {
 
     @Test
     public void shouldGetLatestRevisionDataFromConnection() {
-        PackageRevision packageRevision = new PackageRevision("REVISION", new Date(), "USER", "REVISION_COMMENT", "TRACKBACK_URL", new HashMap());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = null;
+        try {
+            date = dateFormat.parse("27/09/2016");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        PackageRevision packageRevision = new PackageRevision("REVISION", date, "USER", "REVISION_COMMENT", "TRACKBACK_URL", new HashMap());
 
         NuGetFeedDocument mockDocument = mock(NuGetFeedDocument.class);
         when(mockDocument.getPackageRevision(false)).thenReturn(packageRevision);
@@ -65,7 +75,7 @@ public class PackageConfigHandlerTest {
 
         verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
         Assert.assertEquals(packageRevision.getRevision(), revisionMap.get("revision"));
-        Assert.assertEquals(packageRevision.getTimestamp(), revisionMap.get("timestamp"));
+        Assert.assertThat((String) revisionMap.get("timestamp"), containsString("2016-09-27"));
         Assert.assertEquals(packageRevision.getUser(), revisionMap.get("user"));
         Assert.assertEquals(packageRevision.getRevisionComment(), revisionMap.get("revisionComment"));
         Assert.assertEquals(packageRevision.getData(), revisionMap.get("data"));
