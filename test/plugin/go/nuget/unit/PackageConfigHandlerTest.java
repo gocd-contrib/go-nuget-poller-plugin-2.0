@@ -38,7 +38,7 @@ public class PackageConfigHandlerTest {
 
     @Test
     public void shouldErrorWhenPackageIDisMissing() {
-        Map requestBody = createPackageConfigurationRequestBody("");
+        Map requestBody = createSampleRequestForPackageConfiguration("");
 
         List errorList = packageConfigHandler.handleValidatePackageConfiguration(requestBody);
         Assert.assertFalse(errorList.isEmpty());
@@ -47,7 +47,7 @@ public class PackageConfigHandlerTest {
 
     @Test
     public void shouldNotErrorWhenPackageConfigurationsAreValid() {
-        Map requestBody = createPackageConfigurationRequestBody("ID");
+        Map requestBody = createSampleRequestForPackageConfiguration("ID");
 
         List errorList = packageConfigHandler.handleValidatePackageConfiguration(requestBody);
         Assert.assertTrue(errorList.isEmpty());
@@ -63,13 +63,16 @@ public class PackageConfigHandlerTest {
             e.printStackTrace();
         }
 
-        PackageRevision packageRevision = new PackageRevision("REVISION", date, "USER", "REVISION_COMMENT", "TRACKBACK_URL", new HashMap());
+        Map data = new HashMap();
+        data.put("VERSION", "3.5.0");
+
+        PackageRevision packageRevision = new PackageRevision("REVISION", date, "USER", "REVISION_COMMENT", "TRACKBACK_URL", data);
 
         NuGetFeedDocument mockDocument = mock(NuGetFeedDocument.class);
         when(mockDocument.getPackageRevision(false)).thenReturn(packageRevision);
         when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(mockDocument);
 
-        Map revisionMap = packageConfigHandler.handleLatestRevision(createMapWithPackageAndRepoConfigs(URL, USERNAME, PASSWORD, PACKAGE_ID));
+        Map revisionMap = packageConfigHandler.handleLatestRevision(createSampleRequestForCheckPackageConnection(URL, USERNAME, PASSWORD, PACKAGE_ID));
 
         verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
         Assert.assertEquals(packageRevision.getRevision(), revisionMap.get("revision"));
@@ -77,12 +80,13 @@ public class PackageConfigHandlerTest {
         Assert.assertEquals(packageRevision.getUser(), revisionMap.get("user"));
         Assert.assertEquals(packageRevision.getRevisionComment(), revisionMap.get("revisionComment"));
         Assert.assertEquals(packageRevision.getData(), revisionMap.get("data"));
+        Assert.assertEquals(packageRevision.getData().get("VERSION"), "3.5.0");
     }
 
     @Test
     public void shouldReturnEmptyMapIfNoPackageIsFound() {
         when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
-        Map revisionMap = packageConfigHandler.handleLatestRevision(createMapWithPackageAndRepoConfigs(URL, USERNAME, PASSWORD, PACKAGE_ID));
+        Map revisionMap = packageConfigHandler.handleLatestRevision(createSampleRequestForCheckPackageConnection(URL, USERNAME, PASSWORD, PACKAGE_ID));
         Assert.assertTrue(revisionMap.isEmpty());
     }
 
@@ -90,7 +94,7 @@ public class PackageConfigHandlerTest {
     public void shouldFailIfPackageIsNull() {
         when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
 
-        Map revisionMap = packageConfigHandler.handleCheckPackageConnection(createMapWithPackageAndRepoConfigs(URL, USERNAME, PASSWORD, PACKAGE_ID));
+        Map revisionMap = packageConfigHandler.handleCheckPackageConnection(createSampleRequestForCheckPackageConnection(URL, USERNAME, PASSWORD, PACKAGE_ID));
 
         verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
 
@@ -102,7 +106,7 @@ public class PackageConfigHandlerTest {
     public void shouldFailIfPackageIsEmptyMap() {
         when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
 
-        Map revisionMap = packageConfigHandler.handleCheckPackageConnection(createMapWithPackageAndRepoConfigs(URL, USERNAME, PASSWORD, PACKAGE_ID));
+        Map revisionMap = packageConfigHandler.handleCheckPackageConnection(createSampleRequestForCheckPackageConnection(URL, USERNAME, PASSWORD, PACKAGE_ID));
 
         verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
 
@@ -119,7 +123,7 @@ public class PackageConfigHandlerTest {
         when(mockDocument.getPackageRevision(false)).thenReturn(packageRevision);
         when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(mockDocument);
 
-        Map revisionMap = packageConfigHandler.handleCheckPackageConnection(createMapWithPackageAndRepoConfigs(URL, USERNAME, PASSWORD, PACKAGE_ID));
+        Map revisionMap = packageConfigHandler.handleCheckPackageConnection(createSampleRequestForCheckPackageConnection(URL, USERNAME, PASSWORD, PACKAGE_ID));
 
         verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
 
@@ -127,8 +131,41 @@ public class PackageConfigHandlerTest {
         Assert.assertEquals(((List) revisionMap.get("messages")).get(0), "Successfully found revision: " + revision);
     }
 
+    @Test
+    public void shouldReturnEmptyMapIfNoNewerPackageExists() {
+        String version = "3.5.1";
+        String latestRevisionSinceQueryString = "/GetUpdates()?packageIds='NUnit'&versions='"+version+"'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+        NuGetFeedDocument mockDocument = mock(NuGetFeedDocument.class);
+        when(mockDocument.getPackageRevision(true)).thenReturn(null);
+        when(connectionHandler.getNuGetFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD)).thenReturn(mockDocument);
 
-    private Map createPackageConfigurationRequestBody(String packageID) {
+        Map revisionMap = packageConfigHandler.handleLatestRevisionSince(createSampleRequestForLatestRevisionSince(URL, USERNAME, PASSWORD, PACKAGE_ID, version));
+
+        verify(connectionHandler).getNuGetFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD);
+
+        Assert.assertTrue(revisionMap.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnPackageDataIfNewerPackageExists() {
+        String version = "1.1.1";
+        String revision = "NUnit-3.5.1";
+        String latestRevisionSinceQueryString = "/GetUpdates()?packageIds='NUnit'&versions='"+version+"'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+        NuGetFeedDocument mockDocument = mock(NuGetFeedDocument.class);
+        PackageRevision mockPackageRevision = mock(PackageRevision.class);
+        when(mockDocument.getPackageRevision(true)).thenReturn(mockPackageRevision);
+        when(mockPackageRevision.getRevision()).thenReturn(revision);
+        when(mockPackageRevision.getTimestamp()).thenReturn(new Date());
+        when(connectionHandler.getNuGetFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD)).thenReturn(mockDocument);
+
+        Map revisionMap = packageConfigHandler.handleLatestRevisionSince(createSampleRequestForLatestRevisionSince(URL, USERNAME, PASSWORD, PACKAGE_ID, version));
+
+        verify(connectionHandler).getNuGetFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD);
+
+        Assert.assertEquals(revision, revisionMap.get("revision"));
+    }
+
+    private Map createSampleRequestForPackageConfiguration(String packageID) {
         Map packageIDMap = new HashMap();
         packageIDMap.put("value", packageID);
 
@@ -141,7 +178,7 @@ public class PackageConfigHandlerTest {
         return requestMap;
     }
 
-    private Map createRepositoryConfigurationRequestBody(String url, String username, String password) {
+    private Map createSampleRequestForRepositoryConfiguration(String url, String username, String password) {
         Map urlMap = new HashMap();
         urlMap.put("value", url);
         Map fieldsMap = new HashMap();
@@ -157,12 +194,35 @@ public class PackageConfigHandlerTest {
         return bodyMap;
     }
 
-    private Map createMapWithPackageAndRepoConfigs(String url, String username, String password, String packageID) {
-        Map repoConfigs = createRepositoryConfigurationRequestBody(url, username, password);
-        Map packageConfigs = createPackageConfigurationRequestBody(packageID);
+    private Map createSampleRequestForCheckPackageConnection(String url, String username, String password, String packageID) {
+        Map repoConfigs = createSampleRequestForRepositoryConfiguration(url, username, password);
+        Map packageConfigs = createSampleRequestForPackageConfiguration(packageID);
         Map compositeMap = new HashMap();
         compositeMap.putAll(repoConfigs);
         compositeMap.putAll(packageConfigs);
+        return compositeMap;
+    }
+
+    private Map createMapOfPreviousRevision(String version) {
+        Map dataMap = new HashMap();
+        dataMap.put("VERSION", version);
+        Map revisionInfoMap = new HashMap();
+        revisionInfoMap.put("data", dataMap);
+        revisionInfoMap.put("timestamp", "2011-07-14T19:43:37.100Z");
+        revisionInfoMap.put("revision", "abc-10.2.1.rpm");
+        Map previousRevisionMap = new HashMap();
+        previousRevisionMap.put("previous-revision", revisionInfoMap);
+        return previousRevisionMap;
+    }
+
+    private Map createSampleRequestForLatestRevisionSince(String url, String username, String password, String packageID, String version){
+        Map repoConfigs = createSampleRequestForRepositoryConfiguration(url, username, password);
+        Map packageConfigs = createSampleRequestForPackageConfiguration(packageID);
+        Map revisionMap = createMapOfPreviousRevision(version);
+        Map compositeMap = new HashMap();
+        compositeMap.putAll(repoConfigs);
+        compositeMap.putAll(packageConfigs);
+        compositeMap.putAll(revisionMap);
         return compositeMap;
     }
 }

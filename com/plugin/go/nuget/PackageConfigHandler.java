@@ -66,6 +66,19 @@ public class PackageConfigHandler extends PluginConfigHandler {
     }
 
     public Map handleLatestRevision(Map request) {
+        String knownPackageRevision = "0.0.1";
+        return pollForRevision(request, knownPackageRevision, false);
+    }
+
+    public Map handleLatestRevisionSince(Map request) {
+        Map revisionMap = (Map) request.get("previous-revision");
+        Map data = (Map) revisionMap.get("data");
+        String previousVersion = (String) data.get("VERSION");
+
+        return pollForRevision(request, previousVersion, true);
+    }
+
+    private Map pollForRevision(Map request, String knownPackageRevision, boolean lastVersionKnown) {
         // Use the Connection Handler to get the collection of data
         Map repoConfigMap = (Map) request.get(REPOSITORY_CONFIGURATION);
 
@@ -76,17 +89,16 @@ public class PackageConfigHandler extends PluginConfigHandler {
         Map packageConfigMap = (Map) request.get(PACKAGE_CONFIGURATION);
         String packageId = parseValueFromEmbeddedMap(packageConfigMap, "PACKAGE_ID");
 
-        NuGetFeedDocument nuGetFeedDocument = connectionHandler.getNuGetFeedDocument(repoUrl, getQuery(packageId), username, password);
-        return parsePackageDataFromDocument(nuGetFeedDocument);
+        NuGetFeedDocument nuGetFeedDocument = connectionHandler.getNuGetFeedDocument(repoUrl, getQuery(packageId, knownPackageRevision), username, password);
+        return parsePackageDataFromDocument(nuGetFeedDocument, lastVersionKnown);
     }
 
-    private Map parsePackageDataFromDocument(NuGetFeedDocument nuGetFeedDocument) {
-        //TODO handle this properly...
+    private Map parsePackageDataFromDocument(NuGetFeedDocument nuGetFeedDocument, boolean lastVersionKnown) {
         Map packageRevisionMap = new HashMap();
-        if (nuGetFeedDocument == null) {
+        if (nuGetFeedDocument == null || nuGetFeedDocument.getPackageRevision(lastVersionKnown) == null) {
             return packageRevisionMap;
         }
-        PackageRevision packageRevision = nuGetFeedDocument.getPackageRevision(false);
+        PackageRevision packageRevision = nuGetFeedDocument.getPackageRevision(lastVersionKnown);
         packageRevisionMap.put("revision", packageRevision.getRevision());
         packageRevisionMap.put("timestamp", formatTimestamp(packageRevision.getTimestamp()));
         packageRevisionMap.put("user", packageRevision.getUser());
@@ -111,11 +123,11 @@ public class PackageConfigHandler extends PluginConfigHandler {
         return value;
     }
 
-    private String getQuery(String packageId) {
+    private String getQuery(String packageId, String knownVersion) {
         StringBuilder query = new StringBuilder();
         query.append("/GetUpdates()?");
         query.append(String.format("packageIds='%s'", packageId));
-        query.append(String.format("&versions='%s'", "0.0.1"));
+        query.append(String.format("&versions='%s'", knownVersion));
         query.append("&includePrerelease=").append(true);
         query.append("&includeAllVersions=true");//has to be true, filter gets applied later
 //        if (upperBoundGiven()) {

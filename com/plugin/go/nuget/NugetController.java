@@ -49,14 +49,18 @@ public class NugetController implements GoPlugin {
             result = packageConfigHandler.handlePackageConfiguration();
         } else if (requestName.equals(VALIDATE_PACKAGE_CONFIGURATION)) {
             result = packageConfigHandler.handleValidatePackageConfiguration(requestBodyMap);
-        } else if(requestName.equals(CHECK_PACKAGE_CONNECTION)){
+        } else if (requestName.equals(CHECK_PACKAGE_CONNECTION)) {
             result = packageConfigHandler.handleCheckPackageConnection(requestBodyMap);
-        } else if(requestName.equals(LATEST_REVISION)){
+        } else if (requestName.equals(LATEST_REVISION)) {
             result = packageConfigHandler.handleLatestRevision(requestBodyMap);
+        } else if (requestName.equals(LATEST_REVISION_SINCE)) {
+            result = packageConfigHandler.handleLatestRevisionSince(requestBodyMap);
         }
 
         if (result != null) {
-            return createResponse(SUCCESS_RESPONSE_CODE, result);
+            GoPluginApiResponse response = createResponse(SUCCESS_RESPONSE_CODE, result);
+            logger.info("Response body " + response.responseBody());
+            return response;
         }
 
         return null;
