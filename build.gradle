@@ -13,6 +13,11 @@ sourceSets {
             srcDirs = ['com/']
         }
     }
+    test {
+        java {
+            srcDirs = ['test/']
+        }
+    }
 }
 
 repositories {
