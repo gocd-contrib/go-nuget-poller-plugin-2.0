@@ -7,12 +7,6 @@ import java.util.Map;
 
 public class PackageConfigHandler extends PluginConfigHandler {
 
-    private ConnectionHandler connectionHandler;
-
-    public PackageConfigHandler(ConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler;
-    }
-
     public Map handleConfiguration() {
         Map packageConfig = new HashMap();
 

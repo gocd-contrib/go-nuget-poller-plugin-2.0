@@ -53,7 +53,6 @@ public class RepositoryConfigHandlerTest {
         verify(connectionHandler).checkConnectionToUrlWithMetadata(SOME_URL, SOME_USERNAME, SOME_PASSWORD);
     }
 
-
     private Map createUrlRequestBody(String url, String username, String password) {
         Map urlMap = new HashMap();
         urlMap.put("value", url);

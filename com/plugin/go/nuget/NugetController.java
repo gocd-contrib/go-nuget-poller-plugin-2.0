@@ -21,7 +21,7 @@ public class NugetController implements GoPlugin {
     private static Logger logger = Logger.getLoggerFor(NugetController.class);
     private ConnectionHandler connectionHandler = new ConnectionHandler();
     private RepositoryConfigHandler repositoryConfigHandler = new RepositoryConfigHandler(connectionHandler);
-    private PackageConfigHandler packageConfigHandler = new PackageConfigHandler(connectionHandler);
+    private PackageConfigHandler packageConfigHandler = new PackageConfigHandler();
     private PackagePoller packagePoller = new PackagePoller(connectionHandler, new NugetQueryBuilder());
 
 

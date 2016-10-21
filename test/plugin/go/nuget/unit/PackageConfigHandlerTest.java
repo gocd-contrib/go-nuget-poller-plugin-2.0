@@ -16,12 +16,10 @@ import static org.mockito.Mockito.mock;
 public class PackageConfigHandlerTest {
 
     PackageConfigHandler packageConfigHandler;
-    ConnectionHandler connectionHandler;
 
     @Before
     public void setup() {
-        connectionHandler = mock(ConnectionHandler.class);
-        packageConfigHandler = new PackageConfigHandler(connectionHandler);
+        packageConfigHandler = new PackageConfigHandler();
     }
 
     @Test
