@@ -22,7 +22,7 @@ public class NugetController implements GoPlugin {
     private ConnectionHandler connectionHandler = new ConnectionHandler();
     private RepositoryConfigHandler repositoryConfigHandler = new RepositoryConfigHandler(connectionHandler);
     private PackageConfigHandler packageConfigHandler = new PackageConfigHandler(connectionHandler);
-    private PackagePoller packagePoller = new PackagePoller(connectionHandler);
+    private PackagePoller packagePoller = new PackagePoller(connectionHandler, new NugetQueryBuilder());
 
 
     public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor) {

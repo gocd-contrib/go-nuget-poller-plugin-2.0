@@ -17,6 +17,9 @@ public class PackageConfigHandler extends PluginConfigHandler {
         Map packageConfig = new HashMap();
 
         packageConfig.put("PACKAGE_ID", createConfigurationField("Package ID", "0", false, true, true));
+        packageConfig.put("POLL_VERSION_FROM", createConfigurationField("Version to poll >=", "1", false, false, false));
+        packageConfig.put("POLL_VERSION_TO", createConfigurationField("Version to poll <", "2", false, false, false));
+        packageConfig.put("INCLUDE_PRE_RELEASE", createConfigurationField("Include Prerelease? (yes/no, defaults to yes)", "3", false, false, false));
 
         return packageConfig;
     }

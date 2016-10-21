@@ -10,12 +10,14 @@ import static utils.Constants.PACKAGE_CONFIGURATION;
 import static utils.Constants.REPOSITORY_CONFIGURATION;
 
 public class PackagePoller {
-
+    private NugetQueryBuilder queryBuilder;
     private ConnectionHandler connectionHandler;
+
     private static Logger logger = Logger.getLoggerFor(PluginConfigHandler.class);
 
-    public PackagePoller(ConnectionHandler connectionHandler) {
+    public PackagePoller(ConnectionHandler connectionHandler, NugetQueryBuilder queryBuilder) {
         this.connectionHandler = connectionHandler;
+        this.queryBuilder = queryBuilder;
     }
 
     public Map handleCheckPackageConnection(Map requestBodyMap) {
@@ -26,7 +28,7 @@ public class PackagePoller {
         try {
             packageRevisionResponse = handleLatestRevision(requestBodyMap);
             String revision = (String) packageRevisionResponse.get("revision");
-            if(revision!=null){
+            if (revision != null) {
                 messages.add("Successfully found revision: " + revision);
                 response.put("status", "success");
                 response.put("messages", messages);
@@ -43,8 +45,7 @@ public class PackagePoller {
     }
 
     public Map handleLatestRevision(Map request) {
-        String knownPackageRevision = "0.0.1";
-        return pollForRevision(request, knownPackageRevision, false);
+        return pollForRevision(request, "", false);
     }
 
     public Map handleLatestRevisionSince(Map request) {
@@ -65,8 +66,14 @@ public class PackagePoller {
 
         Map packageConfigMap = (Map) request.get(PACKAGE_CONFIGURATION);
         String packageId = parseValueFromEmbeddedMap(packageConfigMap, "PACKAGE_ID");
+        String versionTo = parseValueFromEmbeddedMap(packageConfigMap, "POLL_VERSION_TO");
+        String versionFrom = parseValueFromEmbeddedMap(packageConfigMap, "POLL_VERSION_FROM");
+        String includePreRelease = parseValueFromEmbeddedMap(packageConfigMap, "INCLUDE_PRE_RELEASE");
+        includePreRelease = (includePreRelease.isEmpty()) ? "yes" : includePreRelease;
 
-        NuGetFeedDocument nuGetFeedDocument = connectionHandler.getNuGetFeedDocument(repoUrl, getQuery(packageId, knownPackageRevision), username, password);
+        String optionsForFeed = queryBuilder.getQuery(packageId, knownPackageRevision, versionFrom, versionTo, includePreRelease);
+
+        NuGetFeedDocument nuGetFeedDocument = connectionHandler.getNuGetFeedDocument(repoUrl, optionsForFeed, username, password);
         return parsePackageDataFromDocument(nuGetFeedDocument, lastVersionKnown);
     }
 
@@ -92,26 +99,12 @@ public class PackagePoller {
         return date;
     }
 
-        private String parseValueFromEmbeddedMap(Map configMap, String fieldName) {
+    private String parseValueFromEmbeddedMap(Map configMap, String fieldName) {
         if (configMap.get(fieldName) == null) return "";
 
         Map fieldMap = (Map) configMap.get(fieldName);
         String value = (String) fieldMap.get("value");
         return value;
-    }
-
-    private String getQuery(String packageId, String knownVersion) {
-        StringBuilder query = new StringBuilder();
-        query.append("/GetUpdates()?");
-        query.append(String.format("packageIds='%s'", packageId));
-        query.append(String.format("&versions='%s'", knownVersion));
-        query.append("&includePrerelease=").append(true);
-        query.append("&includeAllVersions=true");//has to be true, filter gets applied later
-//        if (upperBoundGiven()) {
-//            query.append("&$filter=Version%20lt%20'").append(pollVersionTo).append("'");
-//        }
-        query.append("&$orderby=Version%20desc&$top=1");
-        return query.toString();
     }
 
 }

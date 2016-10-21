@@ -48,8 +48,10 @@ public class NugetPluginTest {
 
     @Test
     public void shouldReturnConfigurationsWhenHandlingPackageConfigurationRequest() {
-        String expectedPackageConfiguration = "{\"PACKAGE_ID\":" +
-                "{\"display-order\":\"0\",\"display-name\":\"Package ID\",\"part-of-identity\":true,\"secure\":false,\"required\":true}}";
+        String expectedPackageConfiguration = "{\"POLL_VERSION_TO\":{\"display-name\":\"Version to poll \\u003c\",\"secure\":false,\"display-order\":\"2\",\"required\":false,\"part-of-identity\":false}," +
+                "\"POLL_VERSION_FROM\":{\"display-name\":\"Version to poll \\u003e\\u003d\",\"secure\":false,\"display-order\":\"1\",\"required\":false,\"part-of-identity\":false}," +
+                "\"PACKAGE_ID\":{\"display-name\":\"Package ID\",\"secure\":false,\"display-order\":\"0\",\"required\":true,\"part-of-identity\":true}," +
+                "\"INCLUDE_PRE_RELEASE\":{\"display-name\":\"Include Prerelease? (yes/no, defaults to yes)\",\"secure\":false,\"display-order\":\"3\",\"required\":false,\"part-of-identity\":false}}\n";
         Map expectedPackageConfigurationMap = (Map) new GsonBuilder().create().fromJson(expectedPackageConfiguration, Object.class);
 
         when(goApiPluginRequest.requestName()).thenReturn(REQUEST_PACKAGE_CONFIGURATION);

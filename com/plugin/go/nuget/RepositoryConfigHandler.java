@@ -9,7 +9,7 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
 
     private ConnectionHandler connectionHandler;
 
-    public RepositoryConfigHandler (ConnectionHandler connectionHandler){
+    public RepositoryConfigHandler(ConnectionHandler connectionHandler) {
         this.connectionHandler = connectionHandler;
     }
 

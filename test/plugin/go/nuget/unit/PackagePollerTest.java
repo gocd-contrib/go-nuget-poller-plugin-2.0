@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import plugin.go.nuget.ConnectionHandler;
 import plugin.go.nuget.NuGetFeedDocument;
+import plugin.go.nuget.NugetQueryBuilder;
 import plugin.go.nuget.PackagePoller;
 import plugin.go.nuget.builders.RequestBuilder;
 
@@ -34,7 +35,7 @@ public class PackagePollerTest {
     @Before
     public void setup() {
         connectionHandler = mock(ConnectionHandler.class);
-        packagePoller = new PackagePoller(connectionHandler);
+        packagePoller = new PackagePoller(connectionHandler, new NugetQueryBuilder());
     }
 
     public void setUpRequestWithPackageAndRepoConfigurations() {
