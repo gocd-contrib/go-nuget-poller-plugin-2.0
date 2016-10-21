@@ -13,7 +13,7 @@ public class PackageConfigHandler extends PluginConfigHandler {
         this.connectionHandler = connectionHandler;
     }
 
-    public Map handlePackageConfiguration() {
+    public Map handleConfiguration() {
         Map packageConfig = new HashMap();
 
         packageConfig.put("PACKAGE_ID", createConfigurationField("Package ID", "0", false, true, true));
@@ -21,7 +21,7 @@ public class PackageConfigHandler extends PluginConfigHandler {
         return packageConfig;
     }
 
-    public List handleValidatePackageConfiguration(Map request) {
+    public List handleValidateConfiguration(Map request) {
         List validationList = new ArrayList();
         Map configMap = (Map) request.get("package-configuration");
         Map packageIDMap = (Map) configMap.get("PACKAGE_ID");

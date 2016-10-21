@@ -41,15 +41,15 @@ public class NugetController implements GoPlugin {
         Map requestBodyMap = (Map) new GsonBuilder().create().fromJson(goPluginApiRequest.requestBody(), Object.class);
 
         if (requestName.equals(REPOSITORY_CONFIGURATION)) {
-            result = repositoryConfigHandler.handleRepositoryConfiguration();
+            result = repositoryConfigHandler.handleConfiguration();
         } else if (requestName.equals(VALIDATE_REPOSITORY_CONFIGURATION)) {
-            result = repositoryConfigHandler.handleValidateRepositoryConfiguration(requestBodyMap);
+            result = repositoryConfigHandler.handleValidateConfiguration(requestBodyMap);
         } else if (requestName.equals(CHECK_REPOSITORY_CONNECTION)) {
             result = repositoryConfigHandler.handleCheckRepositoryConnection(requestBodyMap);
         } else if (requestName.equals(PACKAGE_CONFIGURATION)) {
-            result = packageConfigHandler.handlePackageConfiguration();
+            result = packageConfigHandler.handleConfiguration();
         } else if (requestName.equals(VALIDATE_PACKAGE_CONFIGURATION)) {
-            result = packageConfigHandler.handleValidatePackageConfiguration(requestBodyMap);
+            result = packageConfigHandler.handleValidateConfiguration(requestBodyMap);
         } else if (requestName.equals(CHECK_PACKAGE_CONNECTION)) {
             result = packagePoller.handleCheckPackageConnection(requestBodyMap);
         } else if (requestName.equals(LATEST_REVISION)) {

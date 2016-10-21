@@ -28,7 +28,7 @@ public class PackageConfigHandlerTest {
     public void shouldErrorWhenPackageIDisMissing() {
         Map requestBody = new RequestBuilder().withPackageConfiguration("").build();
 
-        List errorList = packageConfigHandler.handleValidatePackageConfiguration(requestBody);
+        List errorList = packageConfigHandler.handleValidateConfiguration(requestBody);
         Assert.assertFalse(errorList.isEmpty());
         Assert.assertThat(errorList.get(0).toString(), containsString("Package ID cannot be empty"));
     }
@@ -37,7 +37,7 @@ public class PackageConfigHandlerTest {
     public void shouldNotErrorWhenPackageConfigurationsAreValid() {
         Map requestBody = new RequestBuilder().withPackageConfiguration("SOME_ID").build();
 
-        List errorList = packageConfigHandler.handleValidatePackageConfiguration(requestBody);
+        List errorList = packageConfigHandler.handleValidateConfiguration(requestBody);
         Assert.assertTrue(errorList.isEmpty());
     }
 

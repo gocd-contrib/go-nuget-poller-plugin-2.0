@@ -28,7 +28,7 @@ public class RepositoryConfigHandlerTest {
     public void shouldErrorWhenInvalidRepositoryConfiguration() {
         Map invalidBody = createUrlRequestBody("", "", "");
 
-        List errorList = repositoryConfigHandler.handleValidateRepositoryConfiguration(invalidBody);
+        List errorList = repositoryConfigHandler.handleValidateConfiguration(invalidBody);
 
         Assert.assertFalse(errorList.isEmpty());
     }
@@ -37,7 +37,7 @@ public class RepositoryConfigHandlerTest {
     public void shouldReturnEmptyErrorListWhenValidRepositoryConfigurations() {
         Map validBody = createUrlRequestBody("http://testsite.com", "", "");
 
-        List errorList = repositoryConfigHandler.handleValidateRepositoryConfiguration(validBody);
+        List errorList = repositoryConfigHandler.handleValidateConfiguration(validBody);
 
         Assert.assertTrue(errorList.isEmpty());
     }

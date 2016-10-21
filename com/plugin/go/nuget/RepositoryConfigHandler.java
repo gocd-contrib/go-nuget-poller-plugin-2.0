@@ -13,7 +13,7 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
         this.connectionHandler = connectionHandler;
     }
 
-    public Map handleRepositoryConfiguration() {
+    public Map handleConfiguration() {
         Map repositoryConfig = new HashMap();
 
         repositoryConfig.put("REPOSITORY_URL", createConfigurationField("Repository Url", "0", false, true, true));
@@ -23,7 +23,7 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
         return repositoryConfig;
     }
 
-    public List handleValidateRepositoryConfiguration(Map request) {
+    public List handleValidateConfiguration(Map request) {
         List validationList = new ArrayList();
 
         Map configMap = (Map) request.get("repository-configuration");
