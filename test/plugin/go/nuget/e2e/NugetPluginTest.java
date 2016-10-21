@@ -9,15 +9,14 @@ import org.junit.Before;
 import org.junit.Test;
 import plugin.go.nuget.NugetController;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static utils.Constants.*;
 
 public class NugetPluginTest {
-    private static final int SUCCESS_STATUS_CODE = 200;
-    private static final String REQUEST_REPOSITORY_CONFIGURATION = "repository-configuration";
-    private static final String REQUEST_PACKAGE_CONFIGURATION = "package-configuration";
 
     NugetController nugetController;
     GoPluginApiRequest goApiPluginRequest;
@@ -37,13 +36,49 @@ public class NugetPluginTest {
                 "\"REPOSITORY_URL\":{\"display-order\":\"0\",\"display-name\":\"Repository Url\",\"part-of-identity\":true,\"secure\":false,\"required\":true}}";
 
         Map expectedRepositoryConfigurationMap = (Map) new GsonBuilder().create().fromJson(expectedRepositoryConfiguration, Object.class);
-        when(goApiPluginRequest.requestName()).thenReturn(REQUEST_REPOSITORY_CONFIGURATION);
+        when(goApiPluginRequest.requestName()).thenReturn(REPOSITORY_CONFIGURATION);
 
         GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
         Map responseBodyMap = (Map) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
-        Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
+        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
         Assert.assertEquals(expectedRepositoryConfigurationMap, responseBodyMap);
+    }
+
+    @Test
+    public void shouldReturnNoErrorsForCorrectRepositoryConfiguration() {
+        String requestBody = "{\"repository-configuration\":" +
+                "{\"REPOSITORY_URL\":{\"value\":\"http://nuget.org/api/v2/\"}," +
+                "\"USERNAME\":{\"value\":\"\"}," +
+                "\"PASSWORD\":{\"value\":\"\"}}}";
+        when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_REPOSITORY_CONFIGURATION);
+        when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
+
+        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+
+        List responseBodyList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
+
+        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+        Assert.assertTrue(responseBodyList.isEmpty());
+    }
+
+    @Test
+    public void shouldSuccessfullyConnectToRepository() {
+        String requestBody = "{\"repository-configuration\":" +
+                "{\"REPOSITORY_URL\":{\"value\":\"http://nuget.org/api/v2/\"}," +
+                "\"USERNAME\":{\"value\":\"\"}," +
+                "\"PASSWORD\":{\"value\":\"\"}}}";
+        String expectedResponseAsString = "{\"messages\":[\"Successfully connected to repository url provided\"],\"status\":\"success\"}";
+        when(goApiPluginRequest.requestName()).thenReturn(CHECK_REPOSITORY_CONNECTION);
+        when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
+
+        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+
+        Map responseAsMap = (Map) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
+        Map expectedResponse = (Map) new GsonBuilder().create().fromJson(expectedResponseAsString, Object.class);
+        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+        Assert.assertEquals(expectedResponse, responseAsMap);
+
     }
 
     @Test
@@ -54,13 +89,81 @@ public class NugetPluginTest {
                 "\"INCLUDE_PRE_RELEASE\":{\"display-name\":\"Include Prerelease? (yes/no, defaults to yes)\",\"secure\":false,\"display-order\":\"3\",\"required\":false,\"part-of-identity\":false}}\n";
         Map expectedPackageConfigurationMap = (Map) new GsonBuilder().create().fromJson(expectedPackageConfiguration, Object.class);
 
-        when(goApiPluginRequest.requestName()).thenReturn(REQUEST_PACKAGE_CONFIGURATION);
+        when(goApiPluginRequest.requestName()).thenReturn(PACKAGE_CONFIGURATION);
 
         GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
         Map responseBodyMap = (Map) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
-        Assert.assertEquals(SUCCESS_STATUS_CODE, response.responseCode());
+        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
         Assert.assertEquals(expectedPackageConfigurationMap, responseBodyMap);
+    }
+
+    @Test
+    public void shouldReturnNoErrorsForCorrectPackageConfiguration() {
+        String requestBody = "{\"repository-configuration\":{\"REPOSITORY_URL\":{\"value\":\"http://nuget.org/api/v2/\"}}," +
+                "\"package-configuration\":{\"PACKAGE_ID\":{\"value\":\"NUnit\"}}}";
+        when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_PACKAGE_CONFIGURATION);
+        when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
+
+        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+
+        List responseBodyList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
+
+        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+        Assert.assertTrue(responseBodyList.isEmpty());
+    }
+
+    @Test
+    public void shouldSuccessfullyConnectToPackage() {
+        String requestBody = "{\"repository-configuration\":{\"REPOSITORY_URL\":{\"value\":\"http://nuget.org/api/v2/\"}},"+
+                              "\"package-configuration\":{"+"\"PACKAGE_ID\":{\"value\":\"JQuery\"},"+
+                                                            "\"POLL_VERSION_FROM\":{\"value\":\"2.2.3\"},"+
+                                                            "\"POLL_VERSION_TO\":{\"value\":\"2.2.5\"}," +
+                                                            "\"INCLUDE_PRE_RELEASE\":{\"value\":\"yes\"}}}\n";
+        String expectedResponseAsString = "{\"messages\":[\"Successfully found revision: jQuery-2.2.4\"],\"status\":\"success\"}";
+        when(goApiPluginRequest.requestName()).thenReturn(CHECK_PACKAGE_CONNECTION);
+        when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
+
+        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+
+        Map responseAsMap = (Map) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
+        Map expectedResponse = (Map) new GsonBuilder().create().fromJson(expectedResponseAsString, Object.class);
+        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+        Assert.assertEquals(expectedResponse, responseAsMap);
+
+    }
+
+    @Test
+    public void getLatestRevisionShouldBeSuccessful() {
+        String requestBody = "{\"repository-configuration\":{\"REPOSITORY_URL\":{\"value\":\"http://nuget.org/api/v2/\"}},"+
+                "\"package-configuration\":{"+"\"PACKAGE_ID\":{\"value\":\"JQuery\"},"+
+                "\"POLL_VERSION_FROM\":{\"value\":\"2.2.3\"},"+
+                "\"POLL_VERSION_TO\":{\"value\":\"2.2.5\"}," +
+                "\"INCLUDE_PRE_RELEASE\":{\"value\":\"yes\"}}}\n";
+        when(goApiPluginRequest.requestName()).thenReturn(LATEST_REVISION);
+        when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
+
+        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+
+        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+    }
+
+    @Test
+    public void getLatestRevisionSinceShouldBeSuccessful() {
+        String requestBody = "{\"repository-configuration\":{\"REPOSITORY_URL\":{\"value\":\"http://nuget.org/api/v2/\"}},"+
+                "\"package-configuration\":{\"PACKAGE_ID\":{\"value\":\"jQuery\"},"+
+                                           "\"POLL_VERSION_FROM\":{\"value\":\"2.2.3\"},"+
+                                           "\"POLL_VERSION_TO\":{\"value\":\"3\"},"+
+                                           "\"INCLUDE_PRE_RELEASE\":{\"value\":\"no\"}},"+
+                "\"previous-revision\":{\"revision\":\"jQuery-2.2.4\","+
+                                       "\"timestamp\":\"2016-06-16T16:31:00.873Z\","+
+                                       "\"data\":{\"LOCATION\":\"http://www.nuget.org/api/v2/package/jQuery/2.2.4\",\"VERSION\":\"2.2.4\"}}}";
+        when(goApiPluginRequest.requestName()).thenReturn(LATEST_REVISION_SINCE);
+        when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
+
+        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+
+        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
     }
 
 }
