@@ -5,14 +5,13 @@ import org.junit.Before;
 import org.junit.Test;
 import plugin.go.nuget.ConnectionHandler;
 import plugin.go.nuget.PackageConfigHandler;
+import plugin.go.nuget.builders.RequestBuilder;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.mock;
-import static utils.Constants.PACKAGE_CONFIGURATION;
 
 public class PackageConfigHandlerTest {
 
@@ -27,7 +26,7 @@ public class PackageConfigHandlerTest {
 
     @Test
     public void shouldErrorWhenPackageIDisMissing() {
-        Map requestBody = createSampleRequestForPackageConfiguration("");
+        Map requestBody = new RequestBuilder().withPackageConfiguration("").build();
 
         List errorList = packageConfigHandler.handleValidatePackageConfiguration(requestBody);
         Assert.assertFalse(errorList.isEmpty());
@@ -36,22 +35,10 @@ public class PackageConfigHandlerTest {
 
     @Test
     public void shouldNotErrorWhenPackageConfigurationsAreValid() {
-        Map requestBody = createSampleRequestForPackageConfiguration("ID");
+        Map requestBody = new RequestBuilder().withPackageConfiguration("SOME_ID").build();
 
         List errorList = packageConfigHandler.handleValidatePackageConfiguration(requestBody);
         Assert.assertTrue(errorList.isEmpty());
     }
 
-    private Map createSampleRequestForPackageConfiguration(String packageID) {
-        Map packageIDMap = new HashMap();
-        packageIDMap.put("value", packageID);
-
-        Map packageConfigurationMap = new HashMap();
-        packageConfigurationMap.put("PACKAGE_ID", packageIDMap);
-
-        Map requestMap = new HashMap();
-        requestMap.put(PACKAGE_CONFIGURATION, packageConfigurationMap);
-
-        return requestMap;
-    }
 }
