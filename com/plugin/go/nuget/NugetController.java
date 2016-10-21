@@ -20,8 +20,9 @@ public class NugetController implements GoPlugin {
     private GoApplicationAccessor accessor;
     private static Logger logger = Logger.getLoggerFor(NugetController.class);
     private ConnectionHandler connectionHandler = new ConnectionHandler();
-    private PackageConfigHandler packageConfigHandler = new PackageConfigHandler(connectionHandler);
     private RepositoryConfigHandler repositoryConfigHandler = new RepositoryConfigHandler(connectionHandler);
+    private PackageConfigHandler packageConfigHandler = new PackageConfigHandler(connectionHandler);
+    private PackagePoller packagePoller = new PackagePoller(connectionHandler);
 
 
     public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor) {
@@ -50,11 +51,11 @@ public class NugetController implements GoPlugin {
         } else if (requestName.equals(VALIDATE_PACKAGE_CONFIGURATION)) {
             result = packageConfigHandler.handleValidatePackageConfiguration(requestBodyMap);
         } else if (requestName.equals(CHECK_PACKAGE_CONNECTION)) {
-            result = packageConfigHandler.handleCheckPackageConnection(requestBodyMap);
+            result = packagePoller.handleCheckPackageConnection(requestBodyMap);
         } else if (requestName.equals(LATEST_REVISION)) {
-            result = packageConfigHandler.handleLatestRevision(requestBodyMap);
+            result = packagePoller.handleLatestRevision(requestBodyMap);
         } else if (requestName.equals(LATEST_REVISION_SINCE)) {
-            result = packageConfigHandler.handleLatestRevisionSince(requestBodyMap);
+            result = packagePoller.handleLatestRevisionSince(requestBodyMap);
         }
 
         if (result != null) {
