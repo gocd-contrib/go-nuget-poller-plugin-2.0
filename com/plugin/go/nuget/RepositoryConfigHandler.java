@@ -35,7 +35,7 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
 
         repositoryConfig.put("REPOSITORY_URL", createConfigurationField("Repository Url", "0", false, true, true));
         repositoryConfig.put("USERNAME", createConfigurationField("Username", "1", false, false, false));
-        repositoryConfig.put("PASSWORD", createConfigurationField("Password", "2", true, false, false));
+        repositoryConfig.put("PASSWORD", createConfigurationField("Password (recommended only with https)", "2", true, false, false));
 
         return repositoryConfig;
     }
