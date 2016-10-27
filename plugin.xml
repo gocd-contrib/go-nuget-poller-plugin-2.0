@@ -16,9 +16,9 @@
   ~
   -->
 
-<go-plugin id="nugetPoller" version="1">
+<go-plugin id="nuget" version="1">
     <about>
-        <name>Nuget Poller Plugin</name>
+        <name>Nuget plugin</name>
         <version>1.0.0</version>
         <target-go-version>15.3.0</target-go-version>
         <description>Plugin that polls a Nuget Server using the new API</description>

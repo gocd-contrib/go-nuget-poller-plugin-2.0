@@ -57,4 +57,5 @@ jar {
     from(configurations.compile) {
         into "lib/"
     }
+    from "plugin.xml"
 }
