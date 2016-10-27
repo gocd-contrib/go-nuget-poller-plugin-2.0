@@ -5,11 +5,9 @@
 *.iml
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
 # Gradle files
 build/
 .gradle/
-gradle/
