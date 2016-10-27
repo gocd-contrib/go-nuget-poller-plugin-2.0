@@ -48,7 +48,7 @@ public class NugetPluginTest {
 
     @Test
     public void shouldReturnConfigurationsWhenHandlingRepositoryConfigurationRequest() {
-        String expectedRepositoryConfiguration = "{\"PASSWORD\":{\"display-order\":\"2\",\"display-name\":\"Password (recommended only with https)\",\"part-of-identity\":false,\"secure\":true,\"required\":false}," +
+        String expectedRepositoryConfiguration = "{\"PASSWORD\":{\"display-order\":\"2\",\"display-name\":\"Password (use only with https)\",\"part-of-identity\":false,\"secure\":true,\"required\":false}," +
                 "\"USERNAME\":{\"display-order\":\"1\",\"display-name\":\"Username\",\"part-of-identity\":false,\"secure\":false,\"required\":false}," +
                 "\"REPOSITORY_URL\":{\"display-order\":\"0\",\"display-name\":\"Repository Url\",\"part-of-identity\":true,\"secure\":false,\"required\":true}}";
 
