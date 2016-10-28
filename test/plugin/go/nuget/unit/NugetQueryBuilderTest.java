@@ -74,9 +74,23 @@ public class NugetQueryBuilderTest {
     }
 
     @Test
-    public void shouldNotIncludePreReleaseWhenUserInputsNo() {
+    public void shouldIncludePreReleaseWhenUserInputInvalidOption() {
         String expectedOptions = "/GetUpdates()?packageIds='NUnit'&versions='0.0.1'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
         String query = nugetQueryBuilder.getQuery(PACKAGE_ID, "", "", "", "invalidPreRelease");
+        Assert.assertEquals(expectedOptions, query);
+    }
+
+    @Test
+     public void shouldNotIncludePreReleaseWhenUserInputsNo() {
+        String expectedOptions = "/GetUpdates()?packageIds='NUnit'&versions='0.0.1'&includePrerelease=false&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+        String query = nugetQueryBuilder.getQuery(PACKAGE_ID, "", "", "", "NO");
+        Assert.assertEquals(expectedOptions, query);
+    }
+
+    @Test
+    public void shouldNotIncludePreReleaseWhenUserInputsNoWithDifferentCasing() {
+        String expectedOptions = "/GetUpdates()?packageIds='NUnit'&versions='0.0.1'&includePrerelease=false&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+        String query = nugetQueryBuilder.getQuery(PACKAGE_ID, "", "", "", "No");
         Assert.assertEquals(expectedOptions, query);
     }
 

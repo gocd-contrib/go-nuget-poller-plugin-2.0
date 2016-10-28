@@ -40,7 +40,7 @@ public class NugetQueryBuilder {
     }
 
     private boolean convertIncludePreRelease(String includePreRelease) {
-        if (includePreRelease != null && includePreRelease.equals("No")) {
+        if (includePreRelease != null && includePreRelease.toLowerCase().equals("no")) {
             return false;
         }
         return true;
