@@ -35,7 +35,7 @@ public class RequestBuilder {
         Map urlMap = new HashMap();
         urlMap.put("value", url);
         Map fieldsMap = new HashMap();
-        fieldsMap.put("REPOSITORY_URL", urlMap);
+        fieldsMap.put("REPO_URL", urlMap);
         Map usernameMap = new HashMap();
         usernameMap.put("value", username);
         fieldsMap.put("USERNAME", usernameMap);

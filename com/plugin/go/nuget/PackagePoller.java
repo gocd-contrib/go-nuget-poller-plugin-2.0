@@ -77,7 +77,7 @@ public class PackagePoller {
         // Use the Connection Handler to get the collection of data
         Map repoConfigMap = (Map) request.get(REPOSITORY_CONFIGURATION);
 
-        String repoUrl = parseValueFromEmbeddedMap(repoConfigMap, "REPOSITORY_URL");
+        String repoUrl = parseValueFromEmbeddedMap(repoConfigMap, "REPO_URL");
         String username = parseValueFromEmbeddedMap(repoConfigMap, "USERNAME");
         String password = parseValueFromEmbeddedMap(repoConfigMap, "PASSWORD");
 
