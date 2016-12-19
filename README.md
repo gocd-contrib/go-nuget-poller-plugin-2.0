@@ -1,21 +1,21 @@
-NuGet Poller Plugin for Go
-==================================
+NuGet Poller Plugin for GoCD
+============================
 
 Introduction
 ------------
-This is a [package material](https://docs.go.cd/current/extension_points/package_repository_extension.html) plugin for [Go](http://www.thoughtworks.com/products/go-continuous-delivery). It is currently capable of polling [NuGet](http://www.nuget.org/) repositories running [API V2](http://chris.eldredge.io/blog/2013/02/25/fun-with-nuget-rest-api/).
+This is a [package material](https://docs.go.cd/current/extension_points/package_repository_extension.html) plugin for [GoCD](http://www.go.cd/). It is currently capable of polling [NuGet](http://www.nuget.org/) repositories running [API V2](http://chris.eldredge.io/blog/2013/02/25/fun-with-nuget-rest-api/).
 
-The behaviour and capabilities of the plugin is determined to a significant extent by that of the package material extension point in Go. Be sure to read the package material documentation before using this plugin.
+The behaviour and capabilities of the plugin is determined to a significant extent by that of the package material extension point in GoCD. Be sure to read the package material documentation before using this plugin.
 
-This is a pure Java plugin. It does not need nuget.exe. You may however require nuget.exe on the agents.
+This is a pure Java plugin. It does not need nuget.exe. You may however require nuget.exe on the agents, if you need to download the packages using NuGet.
 
 Installation
 ------------
-Just drop [go-nuget-poller.jar](https://github.com/gocd-contrib/go-nuget-poller-plugin-2.0/releases) into plugins/external directory and restart Go. More details [here](http://www.thoughtworks.com/products/docs/go/13.3/help/plugin_user_guide.html)
+Just drop [go-nuget-poller.jar](https://github.com/gocd-contrib/go-nuget-poller-plugin-2.0/releases) into plugins/external directory and restart GoCD. More details [here](https://docs.go.cd/current/extension_points/plugin_user_guide.html)
 
 Compatibility
 ------------
-This plugin is compatible with the JSON message based plugin API introduced in version 14.4.0. More details [here](https://developer.go.cd/16.3.0/writing_go_plugins/json_message_based_plugin_api.html)
+This plugin is compatible with the JSON message based plugin API introduced in version 14.4.0. More details [here](https://developer.go.cd/16.12.0/writing_go_plugins/json_message_based_plugin_api.html)
 
 Repository definition
 ---------------------
