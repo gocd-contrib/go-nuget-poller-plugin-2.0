@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2017 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,16 @@ public class RepositoryConfigHandlerTest {
 
     @Test
     public void shouldErrorWhenInvalidRepositoryConfiguration() {
-        Map invalidBody = createUrlRequestBody("", "", "");
+        Map invalidBody = createRequestBodyWithCompleteMetadata("", "", "");
+
+        List errorList = repositoryConfigHandler.handleValidateConfiguration(invalidBody);
+
+        Assert.assertFalse(errorList.isEmpty());
+    }
+
+    @Test
+    public void shouldErrorOutWhenRepoUrlIsNull() {
+        Map invalidBody = createRequestBodyWithCompleteMetadata(null, "", "");
 
         List errorList = repositoryConfigHandler.handleValidateConfiguration(invalidBody);
 
@@ -52,7 +61,7 @@ public class RepositoryConfigHandlerTest {
 
     @Test
     public void shouldReturnEmptyErrorListWhenValidRepositoryConfigurations() {
-        Map validBody = createUrlRequestBody("http://testsite.com", "", "");
+        Map validBody = createRequestBodyWithCompleteMetadata("http://testsite.com", "", "");
 
         List errorList = repositoryConfigHandler.handleValidateConfiguration(validBody);
 
@@ -65,12 +74,31 @@ public class RepositoryConfigHandlerTest {
         String SOME_USERNAME = "SomeUsername";
         String SOME_PASSWORD = "somePassword";
 
-        repositoryConfigHandler.handleCheckRepositoryConnection(createUrlRequestBody(SOME_URL, SOME_USERNAME, SOME_PASSWORD));
+        repositoryConfigHandler.handleCheckRepositoryConnection(createRequestBodyWithCompleteMetadata(SOME_URL, SOME_USERNAME, SOME_PASSWORD));
 
         verify(connectionHandler).checkConnectionToUrlWithMetadata(SOME_URL, SOME_USERNAME, SOME_PASSWORD);
     }
 
-    private Map createUrlRequestBody(String url, String username, String password) {
+    @Test
+    public void shouldHandleCheckConnectionWhenOptionalMetadataIsNotProvided() {
+        String SOME_URL = "http://www.nuget.com/";
+
+        repositoryConfigHandler.handleCheckRepositoryConnection(createUrlRequestBody(SOME_URL));
+
+        verify(connectionHandler).checkConnectionToUrlWithMetadata(SOME_URL, null, null);
+    }
+
+    private Map createUrlRequestBody(String url) {
+        Map urlMap = new HashMap();
+        urlMap.put("value", url);
+        Map fieldsMap = new HashMap();
+        fieldsMap.put("REPO_URL", urlMap);
+        Map bodyMap = new HashMap();
+        bodyMap.put(REPOSITORY_CONFIGURATION, fieldsMap);
+        return bodyMap;
+    }
+
+    private Map createRequestBodyWithCompleteMetadata(String url, String username, String password) {
         Map urlMap = new HashMap();
         urlMap.put("value", url);
         Map fieldsMap = new HashMap();
