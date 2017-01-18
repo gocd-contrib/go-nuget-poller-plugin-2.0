@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2017 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,8 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
         Map configMap = (Map) request.get("repository-configuration");
         Map urlMap = (Map) configMap.get("REPO_URL");
 
-        if (urlMap.get("value").equals("")) {
+        Object repoUrl = urlMap.get("value");
+        if (repoUrl == null || repoUrl.equals("")) {
             Map errors = new HashMap();
             errors.put("key", "REPO_URL");
             errors.put("message", "Url cannot be empty");
@@ -68,7 +69,10 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
 
     private String parseValueFromEmbeddedMap(Map configMap, String fieldName) {
         Map fieldMap = (Map) configMap.get(fieldName);
-        String value = (String) fieldMap.get("value");
+        String value = null;
+        if (fieldMap != null) {
+            value = (String) fieldMap.get("value");
+        }
         return value;
     }
 
