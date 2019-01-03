@@ -15,11 +15,15 @@
  *
  */
 
+plugins {
+    id 'co.riiid.gradle' version '0.4.2'
+}
 apply plugin: 'java'
 apply plugin: 'maven'
 
+apply from: 'plugin-helpers.gradle'
+
 group = 'com.thoughtworks.go'
-version = '1.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -33,9 +37,27 @@ sourceSets {
     test {
         java {
             srcDirs = ['test/']
+            compileClasspath += configurations.compileOnly
+            runtimeClasspath += configurations.compileOnly
         }
     }
 }
+
+project.ext.pluginVersion = '1.0'
+project.ext.fullVersion = project.git.distVersion() ? "${project.pluginVersion}-${project.git.distVersion()}" : project.pluginVersion
+
+version = project.fullVersion
+
+project.ext.pluginDesc = [
+        id         : 'nuget',
+        repo       : 'go-nuget-poller-plugin-2.0',
+        version    : project.version,
+        goCdVersion: '18.10.0',
+        name       : 'Nuget plugin',
+        description: 'NuGet Poller Plugin for GoCD',
+        vendorName : 'GoCD Contributors',
+        vendorUrl  : 'https://github.com/gocd-contrib/go-nuget-poller-plugin-2.0'
+]
 
 repositories {
     mavenCentral()
@@ -43,9 +65,9 @@ repositories {
 }
 
 dependencies {
-    compile group: 'cd.go.plugin', name: 'go-plugin-api', version:'18.1.0'
-    compile group: 'com.google.code.gson', name: 'gson', version:'2.3.1'
-    compile group: 'commons-io', name: 'commons-io', version:'2.4'
+    compile group: 'cd.go.plugin', name: 'go-plugin-api', version: '18.1.0'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.3.1'
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
     compile group: 'com.squareup.okhttp', name: 'okhttp', version: '2.7.5'
     compile files('libs/go-plugin-util.jar')
     compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
@@ -60,3 +82,5 @@ jar {
     }
     from "plugin.xml"
 }
+
+apply from: 'plugin-tasks.gradle'
