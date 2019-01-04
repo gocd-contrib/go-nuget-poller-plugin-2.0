@@ -1,8 +1,9 @@
 *.class
 
 # IntelliJ files
-.idea/
+.idea/*
 *.iml
+!.idea/copyright
 
 # Package Files #
 *.war

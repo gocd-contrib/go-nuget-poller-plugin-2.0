@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-  ~ Copyright 2016 ThoughtWorks, Inc.
+  ~ Copyright 2019 ThoughtWorks, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,18 +13,16 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  ~
   -->
-
-<go-plugin id="nuget" version="1">
+<go-plugin id="${id}" version="1">
     <about>
-        <name>Nuget plugin</name>
-        <version>1.0.0</version>
-        <target-go-version>15.3.0</target-go-version>
-        <description>Plugin that polls a Nuget Server using the new API</description>
+        <name>${name}</name>
+        <version>${version}</version>
+        <target-go-version>${goCdVersion}</target-go-version>
+        <description>${description}</description>
         <vendor>
-            <name>ThoughtWorks Go Plugin Team</name>
-            <url>www.thoughtworks.com</url>
+            <name>${vendorName}</name>
+            <url>${vendorUrl}</url>
         </vendor>
     </about>
 </go-plugin>
