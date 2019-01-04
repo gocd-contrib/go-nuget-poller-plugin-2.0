@@ -19,24 +19,14 @@ plugins {
     id 'co.riiid.gradle' version '0.4.2'
 }
 apply plugin: 'java'
-apply plugin: 'maven'
-
 apply from: 'plugin-helpers.gradle'
-
-group = 'com.thoughtworks.go'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 sourceSets {
-    main {
-        java {
-            srcDirs = ['com/']
-        }
-    }
     test {
         java {
-            srcDirs = ['test/']
             compileClasspath += configurations.compileOnly
             runtimeClasspath += configurations.compileOnly
         }
@@ -46,6 +36,7 @@ sourceSets {
 project.ext.pluginVersion = '1.0'
 project.ext.fullVersion = project.git.distVersion() ? "${project.pluginVersion}-${project.git.distVersion()}" : project.pluginVersion
 
+group = 'com.thoughtworks.go'
 version = project.fullVersion
 
 project.ext.pluginDesc = [
@@ -60,8 +51,8 @@ project.ext.pluginDesc = [
 ]
 
 repositories {
+    mavenLocal()
     mavenCentral()
-    maven { url "http://repo.maven.apache.org/maven2" }
 }
 
 dependencies {
@@ -80,7 +71,6 @@ jar {
     from(configurations.compile) {
         into "lib/"
     }
-    from "plugin.xml"
 }
 
 apply from: 'plugin-tasks.gradle'
