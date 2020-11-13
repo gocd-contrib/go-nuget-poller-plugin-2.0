@@ -33,7 +33,7 @@ sourceSets {
     }
 }
 
-project.ext.pluginVersion = '1.0'
+project.ext.pluginVersion = '1.1.0'
 project.ext.fullVersion = project.git.distVersion() ? "${project.pluginVersion}-${project.git.distVersion()}" : project.pluginVersion
 
 group = 'com.thoughtworks.go'
@@ -43,7 +43,7 @@ project.ext.pluginDesc = [
         id         : 'nuget',
         repo       : 'go-nuget-poller-plugin-2.0',
         version    : project.version,
-        goCdVersion: '18.10.0',
+        goCdVersion: '20.9.0',
         name       : 'Nuget plugin',
         description: 'NuGet Poller Plugin for GoCD',
         vendorName : 'GoCD Contributors',
