@@ -33,7 +33,7 @@ sourceSets {
     }
 }
 
-project.ext.pluginVersion = '1.1.0'
+project.ext.pluginVersion = '2.1.0'
 project.ext.fullVersion = project.git.distVersion() ? "${project.pluginVersion}-${project.git.distVersion()}" : project.pluginVersion
 
 group = 'com.thoughtworks.go'
