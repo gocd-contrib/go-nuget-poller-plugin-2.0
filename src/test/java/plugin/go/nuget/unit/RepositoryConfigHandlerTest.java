@@ -17,9 +17,8 @@
 
 package plugin.go.nuget.unit;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import plugin.go.nuget.ConnectionHandler;
 import plugin.go.nuget.RepositoryConfigHandler;
 
@@ -27,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static utils.Constants.REPOSITORY_CONFIGURATION;
@@ -35,7 +36,7 @@ public class RepositoryConfigHandlerTest {
     RepositoryConfigHandler repositoryConfigHandler;
     ConnectionHandler connectionHandler;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         connectionHandler = mock(ConnectionHandler.class);
         repositoryConfigHandler = new RepositoryConfigHandler(connectionHandler);
@@ -47,7 +48,7 @@ public class RepositoryConfigHandlerTest {
 
         List errorList = repositoryConfigHandler.handleValidateConfiguration(invalidBody);
 
-        Assert.assertFalse(errorList.isEmpty());
+        assertFalse(errorList.isEmpty());
     }
 
     @Test
@@ -56,7 +57,7 @@ public class RepositoryConfigHandlerTest {
 
         List errorList = repositoryConfigHandler.handleValidateConfiguration(invalidBody);
 
-        Assert.assertFalse(errorList.isEmpty());
+        assertFalse(errorList.isEmpty());
     }
 
     @Test
@@ -65,7 +66,7 @@ public class RepositoryConfigHandlerTest {
 
         List errorList = repositoryConfigHandler.handleValidateConfiguration(validBody);
 
-        Assert.assertTrue(errorList.isEmpty());
+        assertTrue(errorList.isEmpty());
     }
 
     @Test

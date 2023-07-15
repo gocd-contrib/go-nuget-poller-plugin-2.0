@@ -19,9 +19,8 @@ package plugin.go.nuget.unit;
 
 
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import plugin.go.nuget.ConnectionHandler;
 import plugin.go.nuget.NuGetFeedDocument;
 import plugin.go.nuget.NugetQueryBuilder;
@@ -35,7 +34,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.containsString;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class PackagePollerTest {
@@ -49,7 +50,7 @@ public class PackagePollerTest {
     PackagePoller packagePoller;
     ConnectionHandler connectionHandler;
 
-    @Before
+    @BeforeEach
     public void setup() {
         connectionHandler = mock(ConnectionHandler.class);
         packagePoller = new PackagePoller(connectionHandler, new NugetQueryBuilder());
@@ -72,12 +73,12 @@ public class PackagePollerTest {
         Map revisionMap = packagePoller.handleLatestRevision(sampleRequest);
 
         verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
-        Assert.assertEquals(packageRevision.getRevision(), revisionMap.get("revision"));
-        Assert.assertThat((String) revisionMap.get("timestamp"), containsString("2016-09-27"));
-        Assert.assertEquals(packageRevision.getUser(), revisionMap.get("user"));
-        Assert.assertEquals(packageRevision.getRevisionComment(), revisionMap.get("revisionComment"));
-        Assert.assertEquals(packageRevision.getData(), revisionMap.get("data"));
-        Assert.assertEquals(packageRevision.getData().get("VERSION"), "3.5.0");
+        assertEquals(packageRevision.getRevision(), revisionMap.get("revision"));
+        assertThat((String) revisionMap.get("timestamp")).contains("2016-09-27");
+        assertEquals(packageRevision.getUser(), revisionMap.get("user"));
+        assertEquals(packageRevision.getRevisionComment(), revisionMap.get("revisionComment"));
+        assertEquals(packageRevision.getData(), revisionMap.get("data"));
+        assertEquals(packageRevision.getData().get("VERSION"), "3.5.0");
     }
 
     @Test
@@ -85,7 +86,7 @@ public class PackagePollerTest {
         setUpRequestWithPackageAndRepoConfigurations();
         when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
         Map revisionMap = packagePoller.handleLatestRevision(sampleRequest);
-        Assert.assertTrue(revisionMap.isEmpty());
+        assertTrue(revisionMap.isEmpty());
     }
 
     @Test
@@ -97,8 +98,8 @@ public class PackagePollerTest {
 
         verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
 
-        Assert.assertEquals("failure", revisionMap.get("status"));
-        Assert.assertEquals(((List) revisionMap.get("messages")).get(0), "No packages found");
+        assertEquals("failure", revisionMap.get("status"));
+        assertEquals(((List) revisionMap.get("messages")).get(0), "No packages found");
     }
 
     @Test
@@ -110,8 +111,8 @@ public class PackagePollerTest {
 
         verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
 
-        Assert.assertEquals("failure", revisionMap.get("status"));
-        Assert.assertEquals(((List) revisionMap.get("messages")).get(0), "No packages found");
+        assertEquals("failure", revisionMap.get("status"));
+        assertEquals(((List) revisionMap.get("messages")).get(0), "No packages found");
     }
 
     @Test
@@ -127,8 +128,8 @@ public class PackagePollerTest {
 
         verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
 
-        Assert.assertEquals("success", revisionMap.get("status"));
-        Assert.assertEquals(((List) revisionMap.get("messages")).get(0), "Successfully found revision: " + revision);
+        assertEquals("success", revisionMap.get("status"));
+        assertEquals(((List) revisionMap.get("messages")).get(0), "Successfully found revision: " + revision);
     }
 
 
@@ -148,7 +149,7 @@ public class PackagePollerTest {
 
         verify(connectionHandler).getNuGetFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD);
 
-        Assert.assertTrue(revisionMap.isEmpty());
+        assertTrue(revisionMap.isEmpty());
     }
 
     @Test
@@ -171,7 +172,7 @@ public class PackagePollerTest {
 
         verify(connectionHandler).getNuGetFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD);
 
-        Assert.assertEquals(revision, revisionMap.get("revision"));
+        assertEquals(revision, revisionMap.get("revision"));
     }
 
     private Date buildDate() {

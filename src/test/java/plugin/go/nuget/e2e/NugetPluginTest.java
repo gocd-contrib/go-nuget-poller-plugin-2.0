@@ -21,14 +21,15 @@ package plugin.go.nuget.e2e;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import plugin.go.nuget.NugetController;
 
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static utils.Constants.*;
@@ -39,11 +40,10 @@ public class NugetPluginTest {
     GoPluginApiRequest goApiPluginRequest;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         nugetController = new NugetController();
         goApiPluginRequest = mock(GoPluginApiRequest.class);
-
     }
 
     @Test
@@ -58,8 +58,8 @@ public class NugetPluginTest {
         GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
         Map responseBodyMap = (Map) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
-        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
-        Assert.assertEquals(expectedRepositoryConfigurationMap, responseBodyMap);
+        assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+        assertEquals(expectedRepositoryConfigurationMap, responseBodyMap);
     }
 
     @Test
@@ -75,8 +75,8 @@ public class NugetPluginTest {
 
         List responseBodyList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
-        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
-        Assert.assertTrue(responseBodyList.isEmpty());
+        assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+        assertTrue(responseBodyList.isEmpty());
     }
 
     @Test
@@ -93,8 +93,8 @@ public class NugetPluginTest {
 
         Map responseAsMap = (Map) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
         Map expectedResponse = (Map) new GsonBuilder().create().fromJson(expectedResponseAsString, Object.class);
-        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
-        Assert.assertEquals(expectedResponse, responseAsMap);
+        assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+        assertEquals(expectedResponse, responseAsMap);
 
     }
 
@@ -111,8 +111,8 @@ public class NugetPluginTest {
         GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
         Map responseBodyMap = (Map) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
-        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
-        Assert.assertEquals(expectedPackageConfigurationMap, responseBodyMap);
+        assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+        assertEquals(expectedPackageConfigurationMap, responseBodyMap);
     }
 
     @Test
@@ -126,8 +126,8 @@ public class NugetPluginTest {
 
         List responseBodyList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
-        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
-        Assert.assertTrue(responseBodyList.isEmpty());
+        assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+        assertTrue(responseBodyList.isEmpty());
     }
 
     @Test
@@ -145,8 +145,8 @@ public class NugetPluginTest {
 
         Map responseAsMap = (Map) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
         Map expectedResponse = (Map) new GsonBuilder().create().fromJson(expectedResponseAsString, Object.class);
-        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
-        Assert.assertEquals(expectedResponse, responseAsMap);
+        assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+        assertEquals(expectedResponse, responseAsMap);
 
     }
 
@@ -162,7 +162,7 @@ public class NugetPluginTest {
 
         GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
 
-        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+        assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
     }
 
     @Test
@@ -180,7 +180,7 @@ public class NugetPluginTest {
 
         GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
 
-        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+        assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
     }
 
 }

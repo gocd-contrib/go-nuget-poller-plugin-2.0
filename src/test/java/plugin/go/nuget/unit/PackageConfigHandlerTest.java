@@ -17,22 +17,24 @@
 
 package plugin.go.nuget.unit;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import plugin.go.nuget.PackageConfigHandler;
 import plugin.go.nuget.builders.RequestBuilder;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.containsString;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class PackageConfigHandlerTest {
 
     PackageConfigHandler packageConfigHandler;
 
-    @Before
+    @BeforeEach
     public void setup() {
         packageConfigHandler = new PackageConfigHandler();
     }
@@ -42,8 +44,8 @@ public class PackageConfigHandlerTest {
         Map requestBody = new RequestBuilder().withPackageConfiguration("").build();
 
         List errorList = packageConfigHandler.handleValidateConfiguration(requestBody);
-        Assert.assertFalse(errorList.isEmpty());
-        Assert.assertThat(errorList.get(0).toString(), containsString("Package ID cannot be empty"));
+        assertFalse(errorList.isEmpty());
+        assertThat(errorList.get(0).toString()).contains("Package ID cannot be empty");
     }
 
     @Test
@@ -51,7 +53,7 @@ public class PackageConfigHandlerTest {
         Map requestBody = new RequestBuilder().withPackageConfiguration("SOME_ID").build();
 
         List errorList = packageConfigHandler.handleValidateConfiguration(requestBody);
-        Assert.assertTrue(errorList.isEmpty());
+        assertTrue(errorList.isEmpty());
     }
 
 }
