@@ -27,7 +27,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-project.ext.pluginVersion = '2.1.0'
+project.ext.pluginVersion = '2.1.1'
 project.ext.fullVersion = project.git.distVersion() ? "${project.pluginVersion}-${project.git.distVersion()}" : project.pluginVersion
 
 group = 'com.thoughtworks.go'
