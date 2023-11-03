@@ -18,7 +18,6 @@
 package plugin.go.nuget;
 
 import com.thoughtworks.go.plugin.api.logging.Logger;
-import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
 
 import java.text.SimpleDateFormat;
 import java.util.*;

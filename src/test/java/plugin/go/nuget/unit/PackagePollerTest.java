@@ -18,13 +18,9 @@
 package plugin.go.nuget.unit;
 
 
-import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import plugin.go.nuget.ConnectionHandler;
-import plugin.go.nuget.NuGetFeedDocument;
-import plugin.go.nuget.NugetQueryBuilder;
-import plugin.go.nuget.PackagePoller;
+import plugin.go.nuget.*;
 import plugin.go.nuget.builders.RequestBuilder;
 
 import java.text.ParseException;
