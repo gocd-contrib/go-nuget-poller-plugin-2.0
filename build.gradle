@@ -59,7 +59,7 @@ ext {
 dependencies {
     compileOnly project.deps.gocdPluginApi
     implementation 'com.google.code.gson:gson:2.13.1'
-    implementation 'commons-io:commons-io:2.18.0'
+    implementation 'commons-io:commons-io:2.19.0'
     implementation group: 'com.squareup.okhttp', name: 'okhttp', version: '2.7.5'
     implementation files('libs/go-plugin-util.jar')
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
