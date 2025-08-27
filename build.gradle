@@ -17,32 +17,39 @@
 
 plugins {
     id 'java'
-    id 'io.github.humblerookie.gradle' version '0.5.0'
 }
 
-apply from: 'plugin-helpers.gradle'
+apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-helpers/master/helper.gradle?_=${(int) (new Date().toInstant().epochSecond / 60)}"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-project.ext.pluginVersion = '2.1.1'
-project.ext.fullVersion = project.git.distVersion() ? "${project.pluginVersion}-${project.git.distVersion()}" : project.pluginVersion
+gocdPlugin {
+    id = 'nuget'
+    pluginVersion = '2.1.2'
+    goCdVersion = '20.9.0'
+    name = 'Nuget plugin'
+    description = 'NuGet Poller Plugin for GoCD'
+    vendorName = 'GoCD Contributors'
+    vendorUrl = 'https://github.com/gocd-contrib/go-nuget-poller-plugin-2.0'
 
-group = 'com.thoughtworks.go'
-version = project.fullVersion
+    githubRepo {
+        owner = System.getenv('GITHUB_USER') ?: 'bob'
+        repo = 'go-nuget-poller-plugin-2.0'
+        token = System.getenv('GITHUB_TOKEN') ?: 'bad-token'
+    }
 
-project.ext.pluginDesc = [
-        id         : 'nuget',
-        repo       : 'go-nuget-poller-plugin-2.0',
-        version    : project.version,
-        goCdVersion: '20.9.0',
-        name       : 'Nuget plugin',
-        description: 'NuGet Poller Plugin for GoCD',
-        vendorName : 'GoCD Contributors',
-        vendorUrl  : 'https://github.com/gocd-contrib/go-nuget-poller-plugin-2.0'
-]
+    pluginProject = project
+
+    prerelease = !"No".equalsIgnoreCase(System.getenv('PRERELEASE'))
+    assetsToRelease = [project.tasks.jar]
+}
+
+allprojects {
+    version = gocdPlugin.fullVersion(project)
+}
 
 repositories {
     mavenCentral()
@@ -82,5 +89,3 @@ jar {
         into "lib/"
     }
 }
-
-apply from: 'plugin-tasks.gradle'
