@@ -21,14 +21,19 @@ plugins {
 
 apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-helpers/master/helper.gradle?_=${(int) (new Date().toInstant().epochSecond / 60)}"
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 tasks.withType(JavaCompile).configureEach {
-    options.release = 11
+    options.release = 17
 }
 
 gocdPlugin {
     id = 'nuget'
-    pluginVersion = '2.1.2'
-    goCdVersion = '20.9.0'
+    pluginVersion = '3.0.0'
+    goCdVersion = '22.1.0'
     name = 'Nuget plugin'
     description = 'NuGet Poller Plugin for GoCD'
     vendorName = 'GoCD Contributors'
