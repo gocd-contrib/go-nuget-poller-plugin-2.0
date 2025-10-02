@@ -18,7 +18,6 @@
 plugins {
     id 'java'
 }
-
 apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-helpers/master/helper.gradle?_=${(int) (new Date().toInstant().epochSecond / 60)}"
 
 java {
